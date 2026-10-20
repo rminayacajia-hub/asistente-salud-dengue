@@ -8,6 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from config.settings import settings
 from app.schemas import HealthResponse
 
+# Metadatos del servicio y versión semántica
+APP_NAME = "asistente-dengue-backend"
+APP_VERSION = "1.0.0"
+
 # Inicialización de la aplicación FastAPI
 app = FastAPI(
     title="Asistente de Orientación en Salud Pública (Dengue Ecuador)",
@@ -15,7 +19,7 @@ app = FastAPI(
         "API REST para la orientación ciudadana en dengue basada en guías oficiales "
         "del MSP y la OPS, con triaje determinista de signos de alarma y geolocalización de salud."
     ),
-    version="1.0.0",
+    version=APP_VERSION,
     docs_url="/docs",
     redoc_url="/redoc",
 )
@@ -44,8 +48,8 @@ def get_health() -> HealthResponse:
     return HealthResponse(
         status="ok",
         environment=settings.APP_ENV,
-        service="asistente-dengue-backend",
-        version="1.0.0",
+        service=APP_NAME,
+        version=APP_VERSION,
         timestamp=datetime.now(timezone.utc).isoformat()
     )
 

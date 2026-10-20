@@ -1,0 +1,129 @@
+{
+  "v": 2,
+  "caso": "05",
+  "producto": "GuíaVital",
+  "problema": "La aplicación resuelve el problema de las complicaciones graves por dengue asociadas a la consulta médica tardía y la falta de comprensión ciudadana sobre las guías de salud oficiales. Mediante un asistente de orientación preventivo, busca evitar la saturación del sistema sanitario y promover la búsqueda oportuna de atención cuando aparecen signos de alarma.",
+  "repo": "https://github.com/rminayacajia-hub/asistente-salud-dengue",
+  "miembros": [
+    [
+      "Luis Cahuana",
+      "Tech Lead"
+    ],
+    [
+      "Wilson Salinas",
+      "Builder"
+    ],
+    [
+      "Rafael Minaya",
+      "QA / Seguridad"
+    ]
+  ],
+  "usuarios": "Ciudadano, Familiar del Enfermo, Cuidador",
+  "externos": "Registro de establecimientos MSP (GeoSalud), Catálogo Normativo OPS/MSP",
+  "fe": "react",
+  "be": "fastapi",
+  "db": "sqlite",
+  "prov1": "gemini",
+  "modelo1": "gemini-2.0-flash",
+  "prov2": "groq",
+  "modelo2": "llama-3.1-8b-instant",
+  "patron": "route",
+  "obs": "logs",
+  "deploy": "render",
+  "ep": [
+    [
+      "POST",
+      "/api/chat",
+      "Orientación preventiva con salvaguardas y derivación ante signos de alarma"
+    ],
+    [
+      "GET",
+      "/health",
+      "Monitoreo de salud y estado operativo (Liveness y Readiness)"
+    ],
+    [
+      "GET",
+      "/manage/info",
+      "Información y versión semántica SemVer del servicio"
+    ]
+  ],
+  "pr": [
+    [
+      "system_v1.md",
+      "Orientación empática inicial con delimitación de alcance"
+    ],
+    [
+      "system_v2.md",
+      "Salvaguardas estrictas: prohibición total de diagnóstico y prescripción"
+    ],
+    [
+      "system_v3.md",
+      "Detección reforzada de AINEs y protocolo de derivación inmediata"
+    ]
+  ],
+  "r_ttft": 3,
+  "r_tok": 600,
+  "r_temp": 0.2,
+  "r_in": 2000,
+  "r_rate": 10,
+  "r_falla": "Reintentar con espera creciente (backoff exponencial 1s, 2s, 4s); si persiste la falla, conmutar al proveedor de respaldo (Groq Llama-3.1) y notificar al usuario.",
+  "checks": {
+    "arq": true,
+    "env": true,
+    "svc": false,
+    "ep": false,
+    "prompt": false,
+    "err": false,
+    "log": false,
+    "test": false,
+    "fe": false,
+    "readme": false,
+    "evi": false
+  },
+  "ayuda": {
+    "pr": true,
+    "rnf": true
+  },
+  "adrs": [
+    {
+      "titulo": "Proveedor y modelo generativo",
+      "estado": "Aceptado",
+      "fecha": "2026-10-19",
+      "resp": "Wilson Salinas",
+      "contexto": "El proyecto exige implementar orientación contextualizada sobre guías médicas extensas de la OPS y el MSP. Al trabajar con capas gratuitas de evaluación académica, requerimos una ventana de contexto amplia para procesar fragmentos clínicos sin truncamiento y una cuota generosa de tokens por minuto (TPM) para evitar errores HTTP 429 recurrentes. Además, la demostración en vivo ante el docente exige alta disponibilidad, obligando a disponer de un proveedor de respaldo de conmutación inmediata.",
+      "opciones": "1. Groq (Llama 3.1 8B): como principal y Gemini como respaldo. Ventaja: Groq ofrece latencia ultrabaja generando respuestas a gran velocidad. Desventaja: Su capa gratuita tiene un límite estricto de 6,000 a 12,000 TPM; al inyectar fragmentos clínicos en el prompt, la cuota se agotaría en apenas 2 consultas simultáneas.\n\n2. Google AI Studio (Gemini 2.0 / 1.5 Flash): como principal y Groq como respaldo. Ventaja: Gemini ofrece 1 millón de TPM gratuitos y ventana de 2 millones de tokens, ideal para procesar contexto clínico amplio sin colapsar. Groq actúa como respaldo de emergencia. Desventaja: Exige programar un adaptador polimórfico en llm.py para soportar dos clientes SDK distintos.\n\n3. Modelos locales (Ollama): Descartado por requerir GPUs y memoria RAM incompatibles con capas de despliegue gratuitas.",
+      "decision": "Usaremos Google AI Studio (Gemini 2.0 Flash) como proveedor principal y Groq (Llama 3.1 8B) como proveedor de respaldo, porque Gemini proporciona la capacidad de tokens gratuita necesaria para procesar contexto clínico pesado, mientras que la velocidad de Groq servirá como salvavidas automático si la cuota principal se satura durante la sustentación.",
+      "consecuencias": "Positivas: Alta resiliencia operativa y capacidad holgada de procesamiento de texto clínico sin cortes de servicio. Negativas asumidas: Mayor esfuerzo de desarrollo en app/services/llm.py para normalizar la salida de ambos proveedores."
+    },
+    {
+      "titulo": "Patrón de integración: workflow o agente",
+      "estado": "Aceptado",
+      "fecha": "2026-10-19",
+      "resp": "Wilson Salinas",
+      "contexto": "El asistente GuíaVital debe educar de forma clara sobre el dengue, pero tiene una restricción clínica inquebrantable: debe aplicar una lista de verificación de signos de alarma y derivar al paciente ante cualquier peligro, sin inventar ni omitir síntomas. Debemos decidir qué grado de autonomía otorgar al LLM en el flujo de triaje.",
+      "opciones": "1. Enrutamiento por tipo de consulta (Workflow): El backend clasifica la intención. Si es preventiva, usa el LLM; si el usuario reporta síntomas o activa el checklist, bifurca hacia código condicional rígido en Python. Ventaja: Control absoluto del triaje, garantizando el 100% de derivaciones necesarias sin alucinaciones. Desventaja: Exige programar rutas y esquemas Pydantic diferenciados en FastAPI.\n\n2. Agente con herramientas autónomas (ReAct / Tool Calling libre): El LLM decide autónomamente cuándo invocar la función de evaluación. Ventaja: Mayor fluidez conversacional. Desventaja: Riesgo crítico de seguridad médica por falsos negativos (si el modelo malinterpreta un síntoma grave, no deriva al paciente y pone en riesgo su vida).\n\n3. Sin IA para síntomas (Solo formulario rígido): Descartado porque elimina la empatía y la orientación pedagógica del asistente.",
+      "decision": "Usaremos un Patrón de Enrutamiento (Workflow en Backend), porque permite aprovechar la IA generativa para la educación y prevención comunitaria, pero subordina la evaluación de signos de alarma a una ruta determinista estricta en código Python, garantizando que el modelo jamás tome decisiones clínicas probabilísticas.",
+      "consecuencias": "Positivas: Cero falsos negativos en triaje de peligro; cumplimiento estricto de las salvaguardas éticas y predictibilidad en pruebas unitarias. Negativas asumidas: Menor flexibilidad en el diálogo libre durante el triaje, exigiendo una estructura guiada por casillas de verificación."
+    },
+    {
+      "titulo": "Manejo de claves y datos personales (LOPDP)",
+      "estado": "Aceptado",
+      "fecha": "2026-10-19",
+      "resp": "Rafael Minaya",
+      "contexto": "El backend consume modelos generativos mediante claves privadas de API cuya exposición acarrearía calificación de cero puntos en la rúbrica de UNIANDES. Simultáneamente, los usuarios pueden ingresar datos personales y estados de salud. En Ecuador rige la Ley Orgánica de Protección de Datos Personales (LOPDP, R.O. 459, 2021), que clasifica los datos de salud como categorías especiales de datos sensibles (Art. 25).",
+      "opciones": "1. Claves confinadas en backend (.env) + Arquitectura anónima sin estado (Stateless) con sanitización de logs: Las claves residen únicamente en variables de entorno del servidor. El frontend solo habla con endpoints locales. El sistema no almacena bases de datos de pacientes ni historiales clínicos en disco. Los logs solo registran métricas operativas (tokens, latencia, códigos HTTP), suprimiendo texto libre del usuario. Ventaja: Cumplimiento riguroso del principio de minimización (Art. 10 LOPDP); riesgo cero de filtración de credenciales en Git o navegadores. Desventaja: No permite retomar sesiones pasadas.\n\n2. Almacenamiento cifrado de historiales en base de datos: Descartado por imponer costos de infraestructura y cargas legales desproporcionadas bajo la LOPDP (gestión de consentimientos y derechos ARCO) innecesarias para una herramienta de orientación primaria.\n\n3. Claves consumidas desde el frontend: Descartado rotundamente por constituir una brecha crítica de seguridad (las DevTools del navegador expondrían las claves privadas a cualquier usuario).",
+      "decision": "Adoptamos la Opción 1: Claves de API exclusivas en variables de entorno del backend (.env ignorado por Git) y arquitectura 100% anónima sin persistencia de PII ni datos de salud, con logs de observabilidad estrictamente sanitizados bajo cumplimiento de la LOPDP de Ecuador.",
+      "consecuencias": "Positivas: Blindaje legal ante la LOPDP; eliminación total de superficie de ataque sobre datos de pacientes; cumplimiento de la Regla de Oro 5. Negativas asumidas: El usuario no dispone de historial de consultas pasadas tras cerrar la sesión web."
+    },
+    {
+      "titulo": "Signos de alarma por reglas deterministas, no por el modelo",
+      "estado": "Aceptado",
+      "fecha": "2026-10-19",
+      "resp": "Luis Cahuana",
+      "contexto": "En el dengue, la fase crítica (aparición de choque y hemorragias) coincide con la desaparición de la fiebre. Las guías clínicas de la OPS (2016) y del MSP catalogan con exactitud los signos de alarma cardinales (dolor abdominal continuo, vómitos persistentes, sangrado de mucosas, acumulación de líquidos, letargo, mareo postural). Es imperativo definir si la detección de estos signos la realiza el LLM o un algoritmo determinista.",
+      "opciones": "1. Reglas deterministas booleanas en Python puro: La función evaluar_signos_alarma(respuestas) procesa las respuestas mediante una disyunción booleana lógica (OR inclusivo). Ante al menos 1 signo afirmativo, clasifica inmediatamente como EMERGENCIA_CRITICA y ordena la derivación urgente al hospital o al ECU-911. Ventaja: Cero falsos negativos garantizado matemáticamente; comprobable mediante pruebas unitarias con pytest; explicabilidad clínica absoluta. Desventaja: Requiere capturar los síntomas de forma estructurada.\n\n2. Detección basada en razonamiento del modelo (Prompting): Se pide al LLM que analice los síntomas descritos en texto libre y determine la gravedad. Desventaja: Riesgo inaceptable de falsos negativos por alucinación, ambigüedad semántica o complacencia del modelo, lo que podría demorar el traslado hospitalario y causar la muerte del paciente.\n\n3. Delegación en fórmulas ponderadas complejas: Descartado porque la guía clínica de la OPS no usa pesos numéricos; la regla médica es taxativa: un solo signo de alarma amerita hospitalización inmediata.",
+      "decision": "Adoptamos la Opción 1: Implementar evaluar_signos_alarma exclusivamente mediante lógica booleana determinista en código Python puro dentro de app/tools/evaluacion.py, prohibiendo la intervención del modelo en el cálculo del triaje.",
+      "consecuencias": "Positivas: Cumplimiento de la Regla de Oro 3; garantía certificada de cero falsos negativos; respaldo irrefutable ante preguntas clínicas de la mesa examinadora. Negativas asumidas: El usuario debe responder preguntas guiadas sí/no para los signos de peligro."
+    }
+  ]
+}

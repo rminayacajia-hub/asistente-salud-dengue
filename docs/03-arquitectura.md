@@ -346,7 +346,10 @@ flowchart TD
    - El frontend **no tiene permisos** en Secret Manager (no conoce ni manipula la clave del LLM).
 
 4. **Cero Costo en Reposo (`min-instances = 0`):**
-   - Ambos entornos operan bajo demanda (*Request-based CPU*). En ausencia de tráfico, las 4 instancias se reducen a cero, facturando **\$0.00**.
+   - Ambos entornos operan bajo demanda (*Request-based CPU*). En ausencia de tráfico, las 4 instancias se reducen a cero, facturando **$0.00**.
+
+### 5.5 Integración y Entrega Continua con Versionado SemVer Automático (CI/CD)
+El proyecto implementa un pipeline de CI/CD mediante **GitHub Actions** (`.github/workflows/semver.yml`) que se activa ante Pull Requests con cambios en el backend (`app/**`). El flujo ejecuta la suite de pruebas automatizadas con `pytest`, analiza los mensajes de commit bajo la convención *Conventional Commits* mediante un script desacoplado (`scripts/semver_bumper.py`), y determina el incremento SemVer (`major`, `minor` o `patch`). Para la rama `main` genera versiones oficiales de Release (`vX.Y.Z`) sincronizando la constante `APP_VERSION` en `app/main.py` y publicando el Git Tag respectivo; para la rama `develop` genera pre-releases incrementales con nomenclatura `vX.Y.Z-SNAPSHOT-RC#`, respetando además cualquier ajuste manual de versión introducido por el desarrollador.
 
 ---
 
@@ -362,4 +365,5 @@ flowchart TD
 | **Localizador de Salud** | `app/tools/geosalud.py` | Búsqueda y filtrado determinista de establecimientos de salud en dataset local indexado. | Regla 3: Lo que se calcula, va en código. |
 | **Configuraciones** | `config/settings.py` | Parámetros de umbrales, nombres de colecciones y rutas estáticas. | Regla 4: Lo que cambia, va en configuración. |
 | **Gestión de Secretos** | Secret Manager / `.env` | Claves de API (`GEMINI_API_KEY`) inyectadas como variables de entorno seguras. | Regla 5: Lo que es secreto, no toca el repo. |
+| **Automatización CI/CD** | `.github/workflows/semver.yml` y `scripts/semver_bumper.py` | Pipeline de GitHub Actions para versionado SemVer continuo y generación de tags. | Trazabilidad y entrega continua. |
 | **Frontend UI** | `frontend/` (Angular PWA) | SPA interactiva con TypeScript, Service Worker offline, instalación móvil y proxy Nginx OIDC. | Regla 6: Lo que tiene consecuencias, requiere confirmación. |
