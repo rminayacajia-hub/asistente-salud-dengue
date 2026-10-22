@@ -5,6 +5,9 @@ pydantic>=2.9.0
 python-dotenv>=1.0.0
 httpx>=0.27.0
 
+# Cliente de Inteligencia Artificial (SDK estándar compatible con Gemini, Groq y servidor local)
+openai>=1.50.0
+
 # Pruebas automatizadas y aseguramiento de calidad
 pytest>=8.0.0
 

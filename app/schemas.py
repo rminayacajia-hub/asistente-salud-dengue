@@ -2,13 +2,14 @@
 Esquemas de Datos Pydantic para el Asistente de Orientación en Dengue.
 Define contratos estrictos para validación de entrada/salida y serialización UTF-8.
 """
-from typing import List, Optional
+from typing import List, Optional, Literal
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 
 
 class HealthResponse(BaseModel):
     """Esquema de respuesta para monitoreo de salud del backend (GET /health)."""
     status: str = Field(default="ok", description="Estado operativo del servicio")
+    estado: str = Field(default="ok", description="Compatibilidad con el estándar del kit del seminario")
     environment: str = Field(description="Entorno de ejecución (development / production)")
     service: str = Field(default="asistente-dengue-backend", description="Identificador del microservicio")
     version: str = Field(default="1.0.0", description="Versión semántica del API")
@@ -146,3 +147,105 @@ class TriajeOutput(BaseModel):
         default_factory=list,
         description="Establecimientos oficiales recomendados por cercanía geográfica"
     )
+
+
+# ==============================================================================
+# INTEGRACIÓN DEL KIT DE IA (SEMANA 2) - ESQUEMAS ESTRICTOS Y VALIDADOS
+# ==============================================================================
+
+class Estricto(BaseModel):
+    """
+    Clase base con modo estricto: prohíbe atributos no declarados (extra="forbid").
+    Evita que el LLM alucine campos fuera del contrato estructurado.
+    """
+    model_config = ConfigDict(extra="forbid")
+
+
+# ------------------------------------------------------------------------------
+# 1. ESQUEMAS UTILIZADOS POR LAS PRUEBAS UNITARIAS DEL KIT (tests/test_llm.py)
+# ------------------------------------------------------------------------------
+class Solicitud(BaseModel):
+    """Contenedor de entrada con límite de caracteres para prevenir ataques de inyección."""
+    texto: str = Field(min_length=5, max_length=2000, description="Texto de la consulta del usuario")
+
+
+class Clasificacion(Estricto):
+    """Esquema de salida utilizado para validar el comportamiento del ClienteLLM."""
+    es_soporte_tecnologico: bool = Field(description="False si la solicitud no pertenece al ámbito")
+    categoria: Literal["hardware", "software", "red", "accesos", "otro"]
+    impacto: Literal["bajo", "medio", "alto"] = Field(description="Nivel de impacto en la operación")
+    urgencia: Literal["baja", "media", "alta"] = Field(description="Nivel de urgencia requerido")
+    resumen: str = Field(description="Resumen de una sola oración sin datos personales")
+    datos_faltantes: list[str] = Field(description="Datos que faltan para procesar")
+
+    @field_validator("resumen")
+    @classmethod
+    def resumen_corto(cls, v: str) -> str:
+        if len(v) > 300:
+            raise ValueError("El resumen debe tener máximo 300 caracteres")
+        return v
+
+
+# Matriz determinista de cálculo de prioridad (regla en Python puro, nunca en el modelo)
+PRIORIDAD = {
+    ("alto", "alta"): "P1", ("alto", "media"): "P2", ("medio", "alta"): "P2",
+    ("alto", "baja"): "P3", ("medio", "media"): "P3", ("bajo", "alta"): "P3",
+}
+
+
+def calcular_prioridad(c: Clasificacion) -> str:
+    """Calcula la prioridad determinista basada en impacto y urgencia."""
+    return PRIORIDAD.get((c.impacto, c.urgencia), "P4")
+
+
+class RespuestaClasificar(BaseModel):
+    """Esquema de respuesta devuelto por el endpoint de soporte del kit."""
+    clasificacion: Clasificacion | None
+    prioridad: str | None
+    requiere_revision_humana: bool
+    mensaje: str
+    proveedor: str | None = None
+
+
+# Esquemas complementarios de soporte para pruebas de integración con servidor simulado
+class Actividad(Estricto):
+    hora: str = Field(description="HH:MM")
+    lugar: str
+    descripcion: str
+
+
+class Dia(Estricto):
+    numero: int
+    actividades: list[Actividad]
+
+
+class Plan(Estricto):
+    titulo: str
+    dias: list[Dia]
+    supuestos: list[str] = Field(description="Lo que el sistema asumió y el usuario debe confirmar")
+
+
+# ------------------------------------------------------------------------------
+# 2. ESQUEMA OFICIAL PARA NUESTRO CASO 05: ASISTENTE DE DENGUE (UNIANDES 2026)
+# ------------------------------------------------------------------------------
+class Fuente(Estricto):
+    """Referencia documental oficial (MSP / OPS) citada por el asistente."""
+    documento: str = Field(description="Nombre oficial del documento normativo")
+    seccion: str | None = Field(description="Capítulo, acápite o tabla de referencia; null si no aplica")
+
+
+class RespuestaAsistente(Estricto):
+    """
+    Esquema de salida oficial del modelo para el Asistente de Orientación en Dengue.
+    Garantiza:
+      1. Orientación ciudadana clara en salud pública.
+      2. Cero prescripción farmacológica (no recomienda medicamentos ni AINEs).
+      3. Detección de abstención cuando la pregunta escapa a las guías oficiales.
+      4. Derivación médica urgente cuando se sospechen signos de alarma.
+      5. Compatibilidad total con Swagger UI (/docs) e interoperabilidad FastAPI.
+    """
+    respuesta: str = Field(description="Orientación clara para el ciudadano")
+    se_abstiene: bool = Field(description="True si la información no está en las guías oficiales del MSP/OPS")
+    derivar_a: str | None = Field(description="Establecimiento de salud, ECU-911 o médico si corresponde; null si no aplica")
+    fuentes: list[Fuente] = Field(description="Citas oficiales que respaldan la orientación")
+    proveedor: str | None = Field(description="Proveedor del modelo (gemini | groq); null si no aplica")
