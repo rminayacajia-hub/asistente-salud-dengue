@@ -30,7 +30,7 @@ from app.services.llm import (
 
 # Metadatos del servicio y versión semántica
 APP_NAME = "asistente-dengue-backend"
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.1.0"
 
 # Versión del prompt ganadora para orientación médica ciudadana
 PROMPT_ASISTENTE = "system_v3"
