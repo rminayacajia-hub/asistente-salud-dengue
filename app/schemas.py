@@ -1,148 +1,173 @@
+"""Esquemas (Pydantic) de lo que ENTRA al sistema y de lo que el MODELO debe devolver.
+
+Reglas para que el esquema funcione con el modo estricto de Gemini y Groq:
+  - extra="forbid" en cada modelo (no se aceptan campos inventados).
+  - Todos los campos son obligatorios; si algo puede faltar, use `tipo | None`.
+  - Nada de límites raros en el esquema (minLength, pattern…): esas reglas van en
+    validadores de Python. El esquema GUÍA al modelo; la validación la hace su código.
 """
-Esquemas de Datos Pydantic para el Asistente de Orientación en Dengue.
-Define contratos estrictos para validación de entrada/salida y serialización UTF-8.
-"""
-from typing import List, Optional
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from __future__ import annotations
+
+from typing import Literal
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
+class Estricto(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+# ======================================================================
+# MODELOS DE DIAGNÓSTICO Y SALUD DEL SERVICIO
+# ======================================================================
 class HealthResponse(BaseModel):
-    """Esquema de respuesta para monitoreo de salud del backend (GET /health)."""
-    status: str = Field(default="ok", description="Estado operativo del servicio")
-    environment: str = Field(description="Entorno de ejecución (development / production)")
-    service: str = Field(default="asistente-dengue-backend", description="Identificador del microservicio")
-    version: str = Field(default="1.0.0", description="Versión semántica del API")
-    timestamp: str = Field(description="Marca de tiempo ISO-8601 del chequeo")
+    """Esquema de verificación de estado y observabilidad del servicio."""
+    estado: str = Field(default="ok", description="Estado operativo del servicio")
+    status: str = Field(default="ok", description="Alias de compatibilidad")
+    service: str = Field(default="asistente-dengue-backend", description="Identificador del servicio")
+    version: str = Field(default="1.0.0", description="Versión semántica del release")
+    environment: str = Field(default="development", description="Entorno de ejecución")
+    timestamp: str = Field(..., description="Marca de tiempo en formato ISO 8601 UTC")
 
 
-class FuenteReferencia(BaseModel):
-    """Cita formal de documento oficial normativo (Regla de Oro 1)."""
-    documento: str = Field(..., description="Nombre formal del documento oficial (MSP / OPS)")
-    origen: str = Field(..., description="Institución emisora (ej. Ministerio de Salud Pública / OPS OMS)")
-    seccion_o_pagina: str = Field(..., description="Acápite, tabla, capítulo o número de página oficial")
-    url: str = Field(..., description="Permalink o URL institucional de verificación")
+# ======================================================================
+# EJEMPLO TRABAJADO · Caso 03 · Triaje de soporte (compatibilidad kit)
+# ======================================================================
+class Solicitud(BaseModel):
+    """Lo que envía el usuario. Límite de tamaño = defensa contra consumo excesivo (OWASP LLM10)."""
+    texto: str = Field(min_length=5, max_length=2000, description="Descripción del problema")
 
 
-class ChatRequest(BaseModel):
-    """Petición de interacción conversacional del ciudadano."""
-    mensaje: str = Field(..., min_length=1, max_length=1000, description="Texto de la consulta del usuario")
-    conversacion_id: Optional[str] = Field(default=None, description="Identificador anónimo de sesión")
-    ciudad: Optional[str] = Field(default=None, max_length=100, description="Ciudad o cantón del usuario")
+class Clasificacion(Estricto):
+    """Lo que el MODELO debe devolver en el ejemplo de soporte."""
+    es_soporte_tecnologico: bool = Field(description="false si la solicitud no es de soporte TI")
+    categoria: Literal["hardware", "software", "red", "accesos", "otro"]
+    impacto: Literal["bajo", "medio", "alto"] = Field(description="A cuántas personas o procesos afecta")
+    urgencia: Literal["baja", "media", "alta"] = Field(description="Qué tan pronto hay que resolverlo")
+    resumen: str = Field(description="Una sola oración, sin datos personales")
+    datos_faltantes: list[str] = Field(description="Qué habría que preguntarle al usuario; lista vacía si nada")
 
-    @field_validator("mensaje")
+    @field_validator("resumen")
     @classmethod
-    def validar_no_vacio(cls, v: str) -> str:
-        stripped = v.strip()
-        if not stripped:
-            raise ValueError("El mensaje de consulta no puede estar vacío.")
-        return stripped
+    def resumen_corto(cls, v: str) -> str:
+        if len(v) > 300:
+            raise ValueError("el resumen debe tener máximo 300 caracteres")
+        return v
 
 
-class ChatResponse(BaseModel):
-    """Respuesta generada con citas oficiales y salvaguardas éticas."""
-    respuesta: str = Field(..., description="Texto sintetizado en lenguaje ciudadano claro")
-    fuentes: List[FuenteReferencia] = Field(
-        default_factory=list,
-        description="Lista de fuentes oficiales que sustentan la afirmación (Regla 1)"
-    )
-    derivacion_emergencia: bool = Field(
-        default=False,
-        description="Indica si la respuesta activa protocolo urgente de traslado o 911"
-    )
-    aviso_seguridad: Optional[str] = Field(
-        default="Orientación en salud pública. No reemplaza el diagnóstico médico ni prescribe fármacos. No automedicarse con AINEs.",
-        description="Advertencia médica obligatoria al pie de la interacción"
-    )
+PRIORIDAD = {  # decisión DETERMINISTA: la toma el código, no el modelo
+    ("alto", "alta"): "P1", ("alto", "media"): "P2", ("medio", "alta"): "P2",
+    ("alto", "baja"): "P3", ("medio", "media"): "P3", ("bajo", "alta"): "P3",
+}
 
 
-class ChecklistInput(BaseModel):
+def calcular_prioridad(c: Clasificacion) -> str:
+    return PRIORIDAD.get((c.impacto, c.urgencia), "P4")
+
+
+class RespuestaClasificar(BaseModel):
+    clasificacion: Clasificacion | None
+    prioridad: str | None
+    requiere_revision_humana: bool
+    mensaje: str
+    proveedor: str | None = None
+
+
+# ======================================================================
+# CASO 05 · ASISTENTE CONVERSACIONAL EN SALUD PÚBLICA (DENGUE)
+# ======================================================================
+class MensajeHistorial(BaseModel):
+    """Mensaje previo en el hilo de conversación."""
+    rol: Literal["user", "assistant"]
+    contenido: str = Field(min_length=1, max_length=2000)
+
+
+class SolicitudChat(BaseModel):
+    """Mensaje del ciudadano hacia el asistente de salud."""
+    mensaje: str = Field(min_length=2, max_length=2000, description="Consulta o síntomas descritos por el ciudadano")
+    historial: list[MensajeHistorial] = Field(default_factory=list, description="Historial previo de la conversación")
+
+
+class Fuente(Estricto):
     """
-    Entrada estructurada para el triaje determinista de signos de alarma.
-    Basado en las guías canónicas de OPS 2016 / MSP Ecuador.
+    Fuente oficial recuperada por RAG o GeoSalud (Semana 3).
+    Cumple con el esquema de 5 metadatos obligatorios de la guía del Caso 05:
+    id, documento, seccion, tema y anio.
+    La llena el código en Python a partir de ChromaDB, NUNCA el LLM.
     """
-    dolor_abdominal_continuo: bool = Field(
-        default=False,
-        description="Dolor abdominal intenso y continuo o dolor a la palpación del abdomen"
-    )
-    vomitos_persistentes: bool = Field(
-        default=False,
-        description="Vómitos frecuentes o reiterados (3 o más episodios en pocas horas)"
-    )
-    acumulacion_liquidos: bool = Field(
-        default=False,
-        description="Evidencia clínica de acumulación de líquidos (edema, ascitis o derrame)"
-    )
-    sangrado_mucosas: bool = Field(
-        default=False,
-        description="Sangrado espontáneo de encías, nariz o hematomas anormales"
-    )
-    letargo_irritabilidad: bool = Field(
-        default=False,
-        description="Somnolencia excesiva, confusión mental, decaimiento extremo o irritabilidad"
-    )
-    mareo_postural: bool = Field(
-        default=False,
-        description="Mareo intenso o desmayo al ponerse de pie (hipotensión postural)"
-    )
-    hepatomegalia_dolorosa: bool = Field(
-        default=False,
-        description="Hígado agrandado (> 2 cm bajo reborde costal) / molestia en hipocondrio derecho"
-    )
-    tiene_fiebre: bool = Field(
-        default=False,
-        description="Presencia de fiebre o antecedentes de fiebre en los últimos 2 a 7 días"
-    )
-    ciudad: Optional[str] = Field(
-        default=None,
-        description="Ciudad del usuario para georreferenciación de emergencia inmediata"
-    )
+    id: str | None = Field(default=None, description="Identificador canónico del fragmento (ej. ops-sec-01)")
+    documento: str = Field(description="Nombre de la institución normativa emisora (OPS / MSP)")
+    seccion: str | None = Field(default=None, description="Título canónico de la sección temática")
+    tema: str | None = Field(default=None, description="Categoría temática: sintomas | prevencion | alarma | tratamiento")
+    anio: str | None = Field(default=None, description="Año oficial de emisión normativa")
 
 
-class EstablecimientoSalud(BaseModel):
+class RespuestaAsistente(Estricto):
+    """Lo que el MODELO debe devolver · Casos 01 Titulación, 05 Dengue, 09 Cacao.
+    OJO: aquí NO hay campo `fuentes`. Si se le pide al modelo, las INVENTA con
+    títulos creíbles (alucinación). Las fuentes las agrega su endpoint en código:
+        RespuestaChatAPI(**r.datos.model_dump(), fuentes=[], proveedor=r.proveedor)
+    y en la semana 3 ese [] se reemplaza por los documentos que recuperó el RAG.
     """
-    Establecimiento de salud georreferenciado (GeoSalud Ecuador / MSP).
-    Garantiza compatibilidad bidireccional con el dataset geosalud_ecuador.json.
-    """
-    model_config = ConfigDict(populate_by_name=True)
-
-    id: Optional[str] = Field(default=None, description="Código de identificación del establecimiento")
-    provincia: Optional[str] = Field(default=None, description="Provincia donde se ubica el centro")
-    ciudad: str = Field(..., description="Cantón o ciudad")
-    nombre: str = Field(..., description="Nombre formal del hospital o centro de salud")
-    nivel: Optional[str] = Field(default=None, description="Nivel de atención (Primer, Segundo o Tercer Nivel)")
-    tipo: str = Field(..., description="Tipología (Centro Tipo C, Hospital Básico, General o Especializado)")
-    direccion: str = Field(..., description="Dirección física o referencia del establecimiento")
-    telefono: str = Field(..., description="Número de teléfono de urgencias o recepción")
-    emergencia_24h: bool = Field(
-        default=True,
-        alias="servicio_emergencia_24h",
-        description="Disponibilidad de servicio de emergencia activo las 24 horas"
-    )
-    capacidad_critica: List[str] = Field(
-        default_factory=list,
-        description="Servicios clínicos clave (UCI, Laboratorio Viral, Rehidratación rápida)"
-    )
+    respuesta: str = Field(description="Orientación clara en salud pública sin jerga médica y sin prescribir")
+    se_abstiene: bool = Field(description="true si la información no está en sus fuentes normativas o médicas")
+    derivar_a: str | None = Field(description="Establecimiento de salud, hospital o ECU-911 al que debe acudir si hay signos de alarma")
 
 
-class TriajeOutput(BaseModel):
-    """Resultado determinista del triaje médico algorítmico."""
-    clasificacion: str = Field(
-        ...,
-        description="Categoría clínica: 'EMERGENCIA_CRITICA', 'MONITOREO_AMBULATORIO' o 'PREVENCION_GENERAL'"
-    )
-    alerta_inmediata: bool = Field(
-        ...,
-        description="True si se detectó al menos un signo de alarma oficial (cero falsos negativos)"
-    )
-    signos_detectados: List[str] = Field(
-        default_factory=list,
-        description="Nombres legibles de los signos de alarma identificados en la evaluación"
-    )
-    accion_recomendada: str = Field(
-        ...,
-        description="Instrucción prioritaria y clara para el usuario o cuidador"
-    )
-    establecimientos_cercanos: List[EstablecimientoSalud] = Field(
-        default_factory=list,
-        description="Establecimientos oficiales recomendados por cercanía geográfica"
-    )
+class RespuestaChatAPI(BaseModel):
+    """Respuesta final entregada por la API REST al usuario/frontend."""
+    respuesta: str
+    se_abstiene: bool
+    derivar_a: str | None
+    fuentes: list[Fuente] = Field(default_factory=list, description="Fuentes oficiales consultadas (RAG semana 3)")
+    proveedor: str | None = Field(default=None, description="Proveedor LLM que generó la respuesta")
+    alerta_signo_alarma: bool = Field(default=False, description="Indica si se activó la Regla de Oro determinista en Python")
+
+
+# ======================================================================
+# PUNTOS DE PARTIDA para las otras familias de casos (del kit estándar)
+# ======================================================================
+class Hallazgo(Estricto):
+    titulo: str
+    detalle: str
+    gravedad: Literal["baja", "media", "alta"]
+
+
+class AnalisisDocumento(Estricto):
+    """Procesadores de documentos · casos 02 Reclamos, 06 Pliegos, 10 Código seguro."""
+    resumen: str
+    hallazgos: list[Hallazgo]
+    datos_faltantes: list[str]
+    advertencia: str | None = Field(description="Límites del análisis; no reemplaza a un profesional")
+
+
+class Actividad(Estricto):
+    hora: str = Field(description="HH:MM")
+    lugar: str
+    descripcion: str
+
+
+class Dia(Estricto):
+    numero: int
+    actividades: list[Actividad]
+
+
+class Plan(Estricto):
+    """Planificadores · caso 04 Turismo.
+    (07 Liquidaciones y 11 RIMPE: el modelo EXTRAE los datos; los CÁLCULOS van en código.)"""
+    titulo: str
+    dias: list[Dia]
+    supuestos: list[str] = Field(description="Lo que el sistema asumió y el usuario debe confirmar")
+
+
+class Opcion(Estricto):
+    texto: str
+    es_correcta: bool
+    explicacion: str = Field(description="Por qué es correcta o incorrecta")
+
+
+class Escenario(Estricto):
+    """Simuladores · caso 08 Situaciones viales."""
+    situacion: str
+    pregunta: str
+    opciones: list[Opcion]
+    advertencia: str | None = Field(description="Recordatorio de que es material educativo")

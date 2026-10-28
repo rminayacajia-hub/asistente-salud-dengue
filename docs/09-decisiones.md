@@ -13,6 +13,8 @@ Este documento recopila las decisiones arquitectónicas estructurales tomadas po
 * [ADR-002: Patrón de Integración Arquitectónica: Workflow de Enrutamiento vs. Agente Autónomo](#adr-002-patrón-de-integración-arquitectónica-workflow-de-enrutamiento-vs-agente-autónomo)
 * [ADR-003: Gestión de Credenciales Seguras y Protección de Datos Personales de Salud (LOPDP Ecuador)](#adr-003-gestión-de-credenciales-seguras-y-protección-de-datos-personales-de-salud-lopdp-ecuador)
 * [ADR-004: Determinismo Estricto en la Evaluación de Signos de Alarma (Reglas en Código vs. Razonamiento del Modelo)](#adr-004-determinismo-estricto-en-la-evaluación-de-signos-de-alarma-reglas-en-código-vs-razonamiento-del-modelo)
+* [ADR-005: Estrategia de Chunking por Secciones Temáticas Canónicas y Base Vectorial ChromaDB Local](#adr-005-estrategia-de-chunking-por-secciones-temáticas-canónicas-y-base-vectorial-chromadb-local)
+* [ADR-006: Separación Arquitectónica Estricta de Datos Tabulares (GeoSalud Determinista vs. RAG Vectorial)](#adr-006-separación-arquitectónica-estricta-de-datos-tabulares-geosalud-determinista-vs-rag-vectorial)
 
 ---
 
@@ -160,3 +162,54 @@ La evaluación de signos de alarma reside en `app/tools/evaluacion.py` y opera m
 ### 4. Consecuencias
 * **Positivas:** Certificación del indicador de calidad del 100% de derivación ante signos de alarma (cero falsos negativos); cumplimiento de la Regla de Oro 3; total explicabilidad del algoritmo ante la mesa de sustentación.
 * **Negativas asumidas:** El ciudadano debe responder un cuestionario estructurado de confirmación para los síntomas agudos, en lugar de confiar únicamente en descripciones conversacionales abiertas.
+
+---
+
+## ADR-005: Estrategia de Chunking por Secciones Temáticas Canónicas y Base Vectorial ChromaDB Local
+
+* **Estado:** Aceptado
+* **Fecha:** 2026-10-28
+* **Responsable:** Wilson Salinas (*Builder*) / Equipo Caso 05
+
+### 1. Contexto del Problema
+Para implementar el pipeline RAG de la Semana 3, era necesario definir la estrategia de fragmentación (*chunking*) del corpus médico-normativo (guías clínicas OPS 2016/2022 y lineamientos MSP Ecuador 2026) y seleccionar el motor de almacenamiento e indexación vectorial.
+A diferencia de los códigos normativos legales que tienen artículos numerados, las guías clínicas se estructuran en secciones temáticas amplias. Un corte arbitrario por número de caracteres (ej. bloques fijos de 500 caracteres) corría el riesgo inaceptable de cortar directivas médicas por la mitad (por ejemplo, separar el término "NO" de "administrar ibuprofeno ni aspirina"), induciendo alucinaciones clínicas de riesgo vital.
+
+### 2. Opciones Consideradas
+* **Opción 1: Chunking ciego por caracteres o tokens (512 caracteres con 10% overlap) con Pinecone / Qdrant Cloud.**
+  * *Desventajas:* Fragmentos incompletos o huérfanos, dependencia de conexión constante a la nube y consumo de saldo en servicios externos de embeddings.
+* **Opción 2: Chunking por Sección Temática Canónica (500–800 palabras) con ChromaDB Persistente y Modelo Local ONNX (`all-MiniLM-L6-v2`).** *(Seleccionada)*
+  * *Ventajas:* Mantiene íntegra cada directiva médica completa (síntomas, signos de alarma, medicamentos contraindicados, hidratación). Cada fragmento conserva su título oficial (`SECCIÓN X`) permitiendo citas verificables (*«Según la Guía OPS, sección 4...»*). El modelo local ONNX corre 100% en CPU local (79 MB), asegurando costo cero y reproducibilidad total en pruebas CI/CD.
+
+### 3. Decisión Adoptada
+Se adopta la **Opción 2**: Chunking por sección temática guiado por el patrón regex `/(?=SECCIÓN\s+\d+)/` indexado en **ChromaDB** persistente local (`data/index/`) con 5 metadatos obligatorios (`id`, `documento`, `seccion`, `tema`, `anio`).
+
+### 4. Consecuencias
+* **Positivas:** Fragmentos clínicamente coherentes; citas bibliográficas auditables; costo cero de embeddings; suite de pruebas ejecutable de forma instantánea y aislada sin conexión a internet.
+* **Negativas asumidas:** El corpus normativo inicial requiere ser curado y estructurado manualmente por secciones temáticas previo a la ingesta.
+
+---
+
+## ADR-006: Separación Arquitectónica Estricta de Datos Tabulares (GeoSalud Determinista vs. RAG Vectorial)
+
+* **Estado:** Aceptado
+* **Fecha:** 2026-10-28
+* **Responsable:** Wilson Salinas (*Builder*) / Equipo Caso 05
+
+### 1. Contexto del Problema
+El sistema cuenta con el catálogo de infraestructura hospitalaria de la red pública MSP de Ecuador ([`data/geosalud_ecuador.json`](data/geosalud_ecuador.json)), que contiene atributos exactos: provincia, cantón, nombre del hospital, dirección, teléfono y disponibilidad de guardia de emergencia 24h.
+Se debía resolver si estos datos debían ser indexados en la base vectorial RAG junto a las guías clínicas o procesarse mediante una herramienta algorítmica independiente.
+
+### 2. Opciones Consideradas
+* **Opción 1: Indexar los centros de salud en la base vectorial ChromaDB.**
+  * *Desventajas:* **Riesgo crítico de alucinación.** La similitud semántica vectorial no garantiza filtros exactos por atributos discretos (ej. buscar hospitales en Manta podría recuperar por proximidad semántica un hospital en Guayaquil, o el LLM podría inventar números telefónicos o alterar direcciones al sintetizar).
+* **Opción 2: Herramienta Determinista en Python Puro (`app/tools/geosalud.py`).** *(Seleccionada)*
+  * *Ventajas:* Aplica la Regla Crítica del Módulo 3. Los datos tabulares estructurados se filtran mediante comparaciones exactas e insensibles a tildes/mayúsculas en Python, garantizando 100% de precisión en nombres de hospitales, teléfonos de urgencia y direcciones físicas.
+
+### 3. Decisión Adoptada
+Se adopta la **Opción 2**: El directorio hospitalario reside en `data/geosalud_ecuador.json` y es consultado exclusivamente por la herramienta determinista `app/tools/geosalud.py`. Cuando un ciudadano menciona su cantón o presenta signos de alarma, Python personaliza la derivación hospitalaria con datos exactos verificados.
+
+### 4. Consecuencias
+* **Positivas:** Cero alucinación en geolocalización hospitalaria; exactitud garantizada en teléfonos y direcciones de emergencia; cumplimiento estricto de las directivas del seminario.
+* **Negativas asumidas:** Requiere mantener sincronizado el archivo JSON con los registros oficiales de la Dirección Nacional de Vigilancia Epidemiológica del MSP.
+
