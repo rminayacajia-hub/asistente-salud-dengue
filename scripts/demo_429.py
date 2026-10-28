@@ -16,10 +16,17 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 import openai  # noqa: E402
 
 from app.config import CATALOGO, Config, _proveedor  # noqa: E402
 from app.services.llm import ClienteLLM, ErrorLLM  # noqa: E402
+import logging  # noqa: E402
+
+# En el demo, el registro va solo al archivo logs/llm.jsonl para que la pantalla quede limpia.
+for _h in list(logging.getLogger("llm").handlers):
+    if not isinstance(_h, logging.FileHandler):
+        logging.getLogger("llm").removeHandler(_h)
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--proveedor", default="simulado", choices=list(CATALOGO))
@@ -28,7 +35,11 @@ a = ap.parse_args()
 
 if a.proveedor == "simulado":
     import servidor_simulado
-    servidor_simulado.iniciar(limite=5, ventana=10)
+    try:
+        servidor_simulado.iniciar(limite=5, ventana=10)
+    except OSError:
+        sys.exit("El servidor simulado ya está abierto en otra terminal (puerto 8099).\n"
+                 "Vaya a esa terminal, deténgalo con Ctrl+C y vuelva a ejecutar este demo.")
 
 p = _proveedor(a.proveedor)
 MENSAJES = [{"role": "user", "content": "Responde solo: ok"}]
@@ -53,7 +64,7 @@ print("\n".join(r1))
 print(f"→ Fallaron {sum('✗' in x for x in r1)} de {a.n}. Eso vería su usuario: un error.\n")
 
 if a.proveedor == "simulado":
-    servidor_simulado._tiempos.clear()  # nueva ventana de un minuto para la ronda 2
+    servidor_simulado._tiempos.clear()  # ventana nueva para la ronda 2
 
 print(f"=== Ronda 2 · CON protección (ClienteLLM: reintentos + espera exponencial + respaldo) ===")
 base = Config(principal=p, respaldo=None, timeout_s=30, max_tokens=256, reintentos=4, razonamiento=None)

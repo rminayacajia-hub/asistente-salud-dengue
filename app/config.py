@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -60,7 +61,31 @@ class Config:
     razonamiento: str | None  # "low" | "medium" | "high" | None
 
 
-def _proveedor(nombre: str) -> Proveedor:
+def _env(nombres: tuple[str, ...], defecto: str = "") -> str:
+    """Primer valor NO vacío entre varios nombres de variable.
+
+    Acepta los nombres del kit (LLM_PRINCIPAL, LLM_TIMEOUT_S...) y los de la plantilla
+    de la clase 1 (LLM_PROVIDER, LLM_TIMEOUT_SECONDS...). Una línea vacía como
+    «LLM_REINTENTOS=» cuenta como ausente y usa el valor por defecto.
+    """
+    for n in nombres:
+        v = os.getenv(n, "").strip()
+        if v:
+            return v
+    return defecto
+
+
+def _numero(nombres: tuple[str, ...], defecto: str, tipo=float):
+    v = _env(nombres, defecto)
+    try:
+        return tipo(v)
+    except ValueError:
+        raise ErrorConfiguracion(f"{nombres[0]} debe ser un número y en el .env dice «{v}».") from None
+
+
+def _proveedor(nombre: str, modelo_rol: str | None = None) -> Proveedor:
+    """modelo_rol: nombre de variable de la plantilla de la clase 1 según el papel
+    del proveedor (LLM_MODEL para el principal, LLM_FALLBACK_MODEL para el respaldo)."""
     nombre = nombre.strip().lower()
     if nombre not in CATALOGO:
         raise ErrorConfiguracion(f"Proveedor desconocido: «{nombre}». Use gemini, groq o simulado.")
@@ -72,22 +97,30 @@ def _proveedor(nombre: str) -> Proveedor:
             raise ErrorConfiguracion(
                 f"Falta {c['clave']} en el archivo .env. Copie .env.example como .env y pegue su clave."
             )
-    modelo = os.getenv(c["modelo_env"], "").strip() if c["modelo_env"] else ""
+    nombres_modelo = tuple(n for n in (c["modelo_env"], modelo_rol) if n)
+    modelo = _env(nombres_modelo) if nombres_modelo else ""
     return Proveedor(nombre, c["base_url"], clave, modelo or c["modelo"])
 
 
 def cargar_config() -> Config:
-    principal = _proveedor(os.getenv("LLM_PRINCIPAL", "gemini"))
-    nombre_respaldo = os.getenv("LLM_RESPALDO", "").strip()
-    respaldo = _proveedor(nombre_respaldo) if nombre_respaldo and nombre_respaldo != principal.nombre else None
-    razonamiento = os.getenv("LLM_RAZONAMIENTO", "low").strip() or None
+    principal = _proveedor(_env(("LLM_PRINCIPAL", "LLM_PROVIDER"), "gemini"), "LLM_MODEL")
+    nombre_respaldo = _env(("LLM_RESPALDO", "LLM_FALLBACK_PROVIDER"))
+    respaldo = (_proveedor(nombre_respaldo, "LLM_FALLBACK_MODEL")
+                if nombre_respaldo and nombre_respaldo != principal.nombre else None)
+    razonamiento: str | None = _env(("LLM_RAZONAMIENTO",), "low").lower()
+    if razonamiento in ("none", "no", "off"):
+        razonamiento = None
+    elif razonamiento not in ("low", "medium", "high"):
+        raise ErrorConfiguracion(
+            f"LLM_RAZONAMIENTO debe ser low, medium, high o none, y en el .env dice «{razonamiento}»."
+        )
     if principal.nombre == "simulado":
         razonamiento = None
     return Config(
         principal=principal,
         respaldo=respaldo,
-        timeout_s=float(os.getenv("LLM_TIMEOUT_S", "30")),
-        max_tokens=int(os.getenv("LLM_MAX_TOKENS", "2048")),
-        reintentos=int(os.getenv("LLM_REINTENTOS", "3")),
+        timeout_s=_numero(("LLM_TIMEOUT_S", "LLM_TIMEOUT_SECONDS"), "30", float),
+        max_tokens=_numero(("LLM_MAX_TOKENS", "LLM_MAX_OUTPUT_TOKENS"), "2048", int),
+        reintentos=_numero(("LLM_REINTENTOS",), "3", int),
         razonamiento=razonamiento,
     )

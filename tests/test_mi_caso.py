@@ -38,8 +38,6 @@ def respuesta_modelo_base(**kw):
         "respuesta": "El dengue se transmite por la picadura del mosquito Aedes aegypti.",
         "se_abstiene": False,
         "derivar_a": None,
-        "fuentes": [Fuente(documento="Guía Dengue MSP 2026", seccion="Transmisión")],
-        "proveedor": "gemini",
     }
     base.update(kw)
     datos = RespuestaAsistente(**base)
@@ -114,3 +112,33 @@ def test_entrada_demasiado_larga_se_rechaza_con_422():
     client = cliente_con(LLMDoble(resultado=respuesta_modelo_base()))
     resp = client.post("/api/chat", json={"texto": "a" * 2005})
     assert resp.status_code == 422
+
+
+def test_chat_con_historial_conversacional():
+    """Valida que el endpoint acepte historial estructurado y devuelva 200."""
+    client = cliente_con(LLMDoble(resultado=respuesta_modelo_base()))
+    payload = {
+        "mensaje": "¿Cuánto dura la fase crítica del dengue?",
+        "historial": [
+            {"rol": "user", "contenido": "Hola, a mi hermano le diagnosticaron dengue."},
+            {"rol": "assistant", "contenido": "Entiendo. Es importante vigilar la hidratación y los signos de alarma."}
+        ]
+    }
+    resp = client.post("/api/chat", json=payload)
+    assert resp.status_code == 200
+    assert resp.json()["se_abstiene"] is False
+
+
+def test_chat_stream_con_signos_alarma():
+    """Valida que el endpoint de streaming inyecte de inmediato la alerta médica ante signos de alarma."""
+    class LLMStreamDoble:
+        def generar_stream(self, system, mensajes):
+            yield " Orientación complementaria sobre hidratación."
+
+    client = cliente_con(LLMStreamDoble())
+    payload = {"mensaje": "Mi hijo tiene dengue y vómitos persistentes con dolor de barriga."}
+    resp = client.post("/api/chat/stream", json=payload)
+    assert resp.status_code == 200
+    texto = resp.text
+    assert "ALERTA MÉDICA PRIORITARIA" in texto
+    assert "Emergencias" in texto
