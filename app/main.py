@@ -55,7 +55,7 @@ from app.tools.geosalud import (
 
 # Metadatos del servicio y versión semántica
 APP_NAME = "asistente-dengue-backend"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 
 # Versión del prompt ganadora para orientación médica ciudadana (con salvaguardas y prohibición de AINEs)
 PROMPT_ASISTENTE = "system_v3"
