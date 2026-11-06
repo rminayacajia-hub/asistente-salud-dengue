@@ -48,5 +48,16 @@ class Settings:
     MSP_CITAS_PHONE: str = os.getenv("MSP_CITAS_PHONE", "171")
     MSP_OFFICIAL_URL: str = os.getenv("MSP_OFFICIAL_URL", "https://www.salud.gob.ec")
 
+    # Seguridad en Despliegue (Semana 4: CORS y Rate Limiting por IP)
+    ALLOWED_ORIGINS: list[str] = [
+        o.strip()
+        for o in os.getenv(
+            "ALLOWED_ORIGINS",
+            "http://localhost:8501,http://127.0.0.1:8501,http://localhost:8000,*",
+        ).split(",")
+        if o.strip()
+    ]
+    RATE_LIMIT_PER_MINUTE: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
+
 
 settings = Settings()

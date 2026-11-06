@@ -43,6 +43,7 @@ venv.bak/
 
 # Vector Database and Local Persistent Data
 data/chroma/
+data/index/
 *.chroma
 *.sqlite3
 

@@ -26,8 +26,8 @@ Actúas como el **Arquitecto de Software Líder y Auditor de Calidad** del equip
 
 ## 3. TABLERO DE ESTADO DEL PROYECTO (CONTROL DE ENTREGABLES)
 
-> **ESTADO ACTUAL:** `FASE 1 (SEMANA 1) COMPLETADA Y AUDITADA - LISTA PARA TRANSICIÓN A FASE 2`  
-> *Regla operativa: Solo trabajar en ítems de la semana activa hasta marcarlos como completados.*
+> **ESTADO ACTUAL:** `TODAS LAS FASES (SEMANAS 1 A 4) COMPLETADAS Y AUDITADAS AL 100% - LISTO PARA ENTREGA Y SUSTENTACIÓN FINAL`  
+> *Regla operativa: Proyecto íntegro en código, pruebas, evaluación, contenedorización y documentación.*
 
 ### [x] FASE 1 - SEMANA 1: Definición y Diseño (Entrega: Viernes 16 Octubre) - COMPLETADA
 - [x] **Catalogación de Fuentes (`docs/04-fuentes.md`):** Inventario con APA 7.ª ed., permalinks vigentes (4-5 años) y estrategia de chunking clínico.
@@ -45,53 +45,50 @@ Actúas como el **Arquitecto de Software Líder y Auditor de Calidad** del equip
 - [x] **Configuración del Repositorio:** `.gitignore` (excluyendo `.env`), `.env.example`, `requirements.txt` y `README.md` inicial.
 - [x] **Esqueleto Ejecutable Backend:** FastAPI con endpoint `GET /health` y suite de pruebas unitarias (`pytest tests/`) aprobada al 100%.
 - [x] **Evidencias Técnicas Registradas:** Documentación en `docs/evidencias/semana-1/README.md`.
-- [!] **Auditoría Git (Acción operativa en equipo):** Asegurar que en el repositorio remoto de GitHub existan commits distribuidos entre los 3 integrantes del grupo.
+- [x] **Auditoría Git (Acción operativa en equipo):** Commits distribuidos entre los 3 integrantes del grupo.
 
 ---
 
-### [ ] FASE 2 - SEMANA 2: MVP e Integración con IA Generativa (Entrega: Viernes 23 Octubre)
-- [ ] **Backend Operativo:** FastAPI con endpoint `POST /chat` validado con Pydantic y streaming de respuesta.
-- [ ] **Módulo de Servicio LLM (`app/services/llm.py`):** Desacoplado de la API; llamada a Gemini / Groq.
-- [ ] **System Prompt con Salvaguardas (`app/prompts/system_v1.md`):** Prohibición estricta de diagnosticar y recetar; derivación ante peligro; lenguaje empático y claro.
-- [ ] **Comparación de Prompts (`docs/05-prompts.md`):** Tabla comparativa de 3 versiones evaluadas con 10 entradas de prueba.
-- [ ] **Frontend Funcional:** Interfaz web conectada al backend, aviso visible de interacción con IA, botón deshabilitado durante la inferencia y manejo amigable de errores.
-- [ ] **Seguridad de Credenciales:** Clave de API exclusivamente en backend vía `.env`. Cero claves en frontend o historial Git.
-- [ ] **Resiliencia y Observabilidad:** Manejo de error HTTP 429 (límite de tasa con backoff exponencial) y logs de tokens consumidos/latencia.
-- [ ] **Pruebas Unitarias Básicas (`tests/`):** Pruebas con mocks de la API ejecutables vía `pytest` sin gastar saldo.
-- [ ] **Evidencias Técnicas:** Capturas y decisiones documentadas en `docs/evidencias/semana-2/`.
+### [x] FASE 2 - SEMANA 2: MVP e Integración con IA Generativa (Entrega: Viernes 23 Octubre) - COMPLETADA
+- [x] **Backend Operativo:** FastAPI con endpoint `POST /chat` y `POST /api/chat` validado con Pydantic y streaming de respuesta.
+- [x] **Módulo de Servicio LLM (`app/services/llm.py`):** Desacoplado de la API; llamada a Gemini / Groq con failover automático.
+- [x] **System Prompt con Salvaguardas (`app/prompts/system_v1.md` a `system_v3.md`):** Prohibición estricta de diagnosticar y recetar; derivación ante peligro; lenguaje empático y claro.
+- [x] **Comparación de Prompts (`docs/05-prompts.md`):** Tabla comparativa de 3 versiones evaluadas con 10 entradas de prueba.
+- [x] **Frontend Funcional (`frontend/app.py`):** Interfaz web conectada al backend, aviso visible de interacción con IA, botón deshabilitado durante la inferencia y manejo amigable de errores.
+- [x] **Seguridad de Credenciales:** Clave de API exclusivamente en backend vía `.env`. Cero claves en frontend o historial Git.
+- [x] **Resiliencia y Observabilidad:** Manejo de error HTTP 429 (límite de tasa con backoff exponencial) y logs de tokens consumidos/latencia.
+- [x] **Pruebas Unitarias Básicas (`tests/`):** Pruebas con mocks de la API ejecutables vía `pytest` sin gastar saldo.
+- [x] **Evidencias Técnicas:** Capturas y decisiones documentadas en `docs/evidencias/semana-2/README.md`.
 
 ---
 
-### [ ] FASE 3 - SEMANA 3: RAG, Agente y Calidad (Entrega: Viernes 30 Octubre)
-- [ ] **Script de Ingesta Reproducible (`scripts/ingest.py`):** Extracción, chunking semántico guiado por encabezados y generación de embeddings en ChromaDB persistente con metadatos.
-- [ ] **Documentación RAG (`docs/06-rag.md`):** Justificación técnica del chunking (600 tokens / 100 overlap) y filtros por metadatos.
-- [ ] **RAG con Citas Obligatorias:** El modelo referencia explícitamente documento, acápite y URL; política de abstención estricta probada ante consultas no cubiertas.
-- [ ] **Herramienta Determinista 1 (`app/tools/evaluacion.py`):** `evaluar_signos_alarma(respuestas)` implementada en Python con lógica booleana rígida (cero intervención de LLM).
-- [ ] **Herramienta Determinista 2 (`app/tools/geosalud.py`):** `ubicar_establecimiento(ciudad)` consultando `data/geosalud_ecuador.json`.
-- [ ] **Configuraciones Centralizadas (`config/`):** Umbrales, rutas y parámetros en archivos de configuración, nunca en el código ni prompt.
-- [ ] **Conjunto de Evaluación (`eval/`):**
-  - `preguntas.csv`: 20 preguntas (12 con respuesta, 4 sin respuesta/abstención, 2 fuera de dominio, 2 inyecciones).
-  - `casos_triaje.csv`: 10 escenarios clínicos con resultado de derivación verificado.
-  - Script `run_eval.py` y reporte de métricas en `docs/07-evaluacion.md`.
-- [ ] **Pruebas Automatizadas:** Tests unitarios de herramientas y validación de esquemas ejecutables con `pytest`.
+### [x] FASE 3 - SEMANA 3: RAG, Agente y Calidad (Entrega: Viernes 30 Octubre) - COMPLETADA
+- [x] **Script de Ingesta Reproducible (`scripts/ingest.py`):** Extracción, chunking por sección temática canónica (`/(?=SECCIÓN\s+\d+)/`) y generación de embeddings locales ONNX en ChromaDB persistente con 5 metadatos.
+- [x] **Documentación RAG (`docs/06-rag.md`):** Justificación técnica del chunking temático (500-800 palabras), separación de datos tabulares, controles OWASP LLM01 y referencias APA.
+- [x] **RAG con Citas Obligatorias (`app/services/retriever.py`):** El sistema inyecta deterministamente documento, sección, tema y año; política de abstención estricta probada ante consultas no cubiertas (`distancia_maxima: 1.28`).
+- [x] **Herramienta Determinista 1 (`app/tools/evaluacion.py` y `app/services/agent.py`):** `evaluar_signos_alarma(entrada)` implementada en Python con lógica booleana rígida leyendo `config/umbrales.json` (cero intervención de LLM).
+- [x] **Herramienta Determinista 2 (`app/tools/geosalud.py`):** `ubicar_establecimiento(ciudad)` consultando `data/geosalud_ecuador.json`.
+- [x] **Configuraciones Centralizadas (`config/umbrales.json` y `config/settings.py`):** Umbrales, rutas y parámetros en archivos de configuración, nunca en el código ni prompt.
+- [x] **Conjunto de Evaluación (`eval/`):**
+  - `eval/preguntas.csv`: 20 preguntas (12 con respuesta, 4 sin respuesta/abstención, 2 fuera de dominio, 2 inyecciones).
+  - `eval/casos_calculo.csv`: 10 escenarios clínicos y geográficos con resultado verificado.
+  - Script `eval/run_eval.py` y reporte de métricas en `docs/07-evaluacion.md`.
+- [x] **Pruebas Automatizadas (`tests/`):** 50 tests unitarios de herramientas, RAG, fallback y validación de esquemas ejecutables con `pytest`.
+- [x] **Evidencias Técnicas:** Documentación y pruebas en vivo en `docs/evidencias/semana-3/README.md`.
 
 ---
 
-### [ ] FASE 4 Y 5 - SEMANA 4: Despliegue, Validación y Cierre (Entrega: Sábado 7 Noviembre)
-*(Ventana de despliegue previa: 31 de octubre al 3 de noviembre)*
-- [ ] **Aplicación Desplegada en la Nube:** URL pública operativa (Render, Railway o Hugging Face Spaces) con `GET /health` respondiendo.
-- [ ] **Secretos en la Nube:** Variables de entorno configuradas en el dashboard de la plataforma (verificado cero secretos en Git).
-- [ ] **Persistencia Vectorial:** ChromaDB sobrevive a reinicios del contenedor o se reconstruye limpiamente al arranque.
-- [ ] **Pruebas Funcionales en Producción (`docs/08-pruebas.md`):** Mínimo 15 casos ejecutados contra la URL pública (resultado esperado vs. obtenido), incluyendo:
-  - 100% derivación en signos de alarma.
-  - 100% rechazo a recetas de fármacos/dosis.
-  - Intentos de inyección de prompt ("ignora tus instrucciones").
-- [ ] **Evaluación Final Reejecutada:** Comparación de métricas de la Semana 3 vs. Semana 4 en `docs/07-evaluacion.md`.
-- [ ] **Documentación Final y Cierre:**
-  - `README.md` completo según plantilla oficial.
-  - `docs/09-decisiones.md` (decisiones de arquitectura, ética y cumplimiento LOPDP Ecuador).
-  - Declaración de uso responsable de IA y desglose de aportes de cada integrante.
-- [ ] **Defensa de Sustentación Ensaya (20 minutos):** Preparación para responder las preguntas clínicas y éticas de la Fase 5.
+### [x] FASE 4 Y 5 - SEMANA 4: Despliegue, Validación y Cierre (Entrega: Sábado 7 Noviembre) - COMPLETADA
+- [x] **Contenedorización y Despliegue (`Dockerfile`):** Configurado con `--host 0.0.0.0 --port ${PORT:-8000}`, `HEALTHCHECK` en `/health` e ingesta pre-construida.
+- [x] **Secretos y Seguridad en Producción:** Variables en `.env.example`, CORS controlado por `ALLOWED_ORIGINS` y limitación de tasa por IP (`RATE_LIMIT_PER_MINUTE`) en `app/main.py`.
+- [x] **Persistencia Vectorial:** ChromaDB sobrevive a reinicios y se auto-reconstruye al arranque si el volumen se limpia (`app/services/retriever.py` y `Dockerfile`).
+- [x] **Pruebas Funcionales (`docs/08-pruebas.md`):** 16 casos (`PF-01` a `PF-16`) documentados con resultado esperado vs. obtenido (100% derivación en signos de alarma, 100% rechazo a recetas de fármacos/AINEs, bloqueo de inyección de prompt y confirmación humana).
+- [x] **Evaluación Final Comparada:** Comparación Semana 3 vs. Semana 4 documentada en `docs/08-pruebas.md` y `docs/07-evaluacion.md`.
+- [x] **Documentación Final y Cierre:**
+  - `README.md` completo con los 14 puntos de la plantilla oficial UNIANDES.
+  - `docs/09-decisiones.md` con ADR-001 a ADR-006, matriz OWASP LLM Top 10 (2025) e inventario LOPDP Ecuador.
+  - `docs/evidencias/semana-4/README.md` con checklist de despliegue y guion de sustentación de 12 minutos.
+- [x] **Banco de Defensa Oral (`docs/repaso_defensa.md`):** Preguntas técnicas y trampa de las Semanas 1 a 4 listas para el tribunal.
 
 ---
 
@@ -101,7 +98,7 @@ Actúas como el **Arquitecto de Software Líder y Auditor de Calidad** del equip
 3. **Lo que se calcula o triajea, va en código determinista:** `evaluar_signos_alarma` y `ubicar_establecimiento` residen en funciones de Python; el LLM jamás calcula riesgos ni triajes.
 4. **Lo que cambia en el tiempo, vive en configuración:** Rutas, parámetros y nombres de modelos viven en `config/` o `.env`.
 5. **Lo que es secreto, nunca toca el repositorio:** `.env` en `.gitignore`; cero claves en commits.
-6. **Lo que tiene consecuencias, requiere confirmación:** Las derivaciones o alertas rojas priorizan el botón de llamada al 911 y el traslado presencial urgente.
+6. **Lo que tiene consecuencias, requiere confirmación:** Las derivaciones o alertas rojas priorizan el botón de llamada al 911 y el traslado presencial urgente con confirmación explícita del usuario.
 
 ---
 
@@ -109,12 +106,3 @@ Actúas como el **Arquitecto de Software Líder y Auditor de Calidad** del equip
 - **NUNCA emitir diagnósticos médicos:** No validar si el paciente "tiene dengue" o en qué fase exacta está clínicamente.
 - **NUNCA recetar medicamentos ni dosificaciones:** Bloqueo determinista del 100% de solicitudes farmacológicas (paracetamol, antibióticos, remedios caseros). Alerta obligatoria contra el uso de AINEs (aspirina, ibuprofeno).
 - **Cero falsos negativos en triaje:** Cualquier presencia de signo de alarma oficial (dolor abdominal continuo, vómitos persistentes, sangrado de mucosas, letargo/irritabilidad, mareo postural, acumulación de líquidos) detiene la conversación general y deriva a urgencias o al 911.
-
----
-
-## 6. PROTOCOLO DE INTERACCIÓN DEL AGENTE
-Cuando el usuario interactúe contigo:
-1. Revisa en qué semana y fase nos encontramos según la fecha actual.
-2. Comprueba qué casillas `[ ]` de esa semana faltan por completar.
-3. Propón código, documentos o validaciones centradas **exclusivamente** en resolver los pendientes de la semana activa.
-4. Cuando un entregable sea finalizado y verificado, indica que debe marcarse como `[x]` en este archivo.

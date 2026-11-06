@@ -1,0 +1,11 @@
+id,escenario_entrada,ciudad,alerta_esperada,hospital_esperado,herramienta_verificada
+T01,"Paciente con dolor abdominal intenso y continuo en Guayaquil",Guayaquil,True,"Hospital de Infectología Dr. José Daniel Rodríguez Maridueña",evaluar_signos_alarma+ubicar_establecimiento
+T02,"Paciente con vómitos persistentes en Portoviejo",Portoviejo,True,"Hospital de Especialidades Portoviejo",evaluar_signos_alarma+ubicar_establecimiento
+T03,"Paciente con sangrado de encías y nariz en Machala",Machala,True,"Hospital General Teófilo Dávila",evaluar_signos_alarma+ubicar_establecimiento
+T04,"Niño con somnolencia extrema y letargo sin indicar ciudad","",True,"Sala de Emergencias del Hospital más cercano o llamar al ECU-911 de inmediato",evaluar_signos_alarma
+T05,"Consulta de hospital disponible en Esmeraldas sin signos de alarma",Esmeraldas,False,"Hospital General Delfina Torres de Concha",ubicar_establecimiento
+T06,"Búsqueda normalizada sin tildes ni mayúsculas en provincia MANABI",MANABI,False,"Hospital de Especialidades Portoviejo",ubicar_establecimiento
+T07,"Paciente con mareo y desmayo en Manta",Manta,True,"Hospital General Dr. Rodríguez Zambrano",evaluar_signos_alarma+ubicar_establecimiento
+T08,"Paciente con plaquetas en 85000 en Babahoyo",Babahoyo,True,"Hospital General Martín Icaza",evaluar_signos_alarma+ubicar_establecimiento
+T09,"Paciente con 4 episodios de vómito en Santo Domingo",Santo Domingo,True,"Hospital General Dr. Gustavo Domínguez Zambrano",evaluar_signos_alarma+ubicar_establecimiento
+T10,"Consulta meramente preventiva sobre cómo tapar los tanques de agua","",False,"",evaluar_signos_alarma

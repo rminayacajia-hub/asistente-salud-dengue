@@ -2,7 +2,6 @@
 Pruebas unitarias para el script de versionado SemVer.
 Valida el cálculo de incrementos según Conventional Commits y formato oficial SemVer.
 """
-
 import pytest
 from scripts.semver_bumper import (
     validate_semver,

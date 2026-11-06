@@ -1,0 +1,16 @@
+{
+  "_descripcion": "Configuración desacoplada de umbrales clínicos y parámetros de recuperación RAG (Semana 3). Evita valores quemados en el código.",
+  "rag": {
+    "coleccion": "dengue_ops_msp",
+    "top_k": 2,
+    "distancia_maxima": 1.28,
+    "ruta_indice": "data/index"
+  },
+  "triaje_clinico": {
+    "dias_fase_critica_min": 3,
+    "dias_fase_critica_max": 7,
+    "vomitos_persistentes_umbral_24h": 3,
+    "temperatura_alerta_celsius": 38.5,
+    "plaquetas_limite_alerta": 100000
+  }
+}

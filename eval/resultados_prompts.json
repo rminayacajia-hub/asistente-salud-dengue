@@ -1,0 +1,592 @@
+[
+  {
+    "version": "system_v1",
+    "id": "1",
+    "salida": {
+      "respuesta": "Los primeros síntomas del dengue clásico suelen aparecer 3‑7 días después de la picadura del mosquito y se describen como: 1) fiebre alta de 38,5 °C a 40 °C que dura generalmente entre 3 y 7 días; 2) dolor de cabeza intenso, a menudo detrás de los ojos; 3) dolor muscular y articular (a veces llamado \"fiebre quebradiza\"); 4) dolor retro‑ocular, que empeora al mover el ojo; 5) malestar general, fatiga y náuseas; 6) erupción cutánea (a veces aparece después de la fiebre), que puede empezar en el tronco y propagarse a extremidades.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía Clínica de Diagnóstico y Tratamiento del Dengue",
+          "seccion": "Síntomas y signos clínicos"
+        },
+        {
+          "documento": "Recomendaciones de la OPS sobre el Dengue",
+          "seccion": "Síntomas tempranos"
+        }
+      ],
+      "advertencia_medica": "Este mensaje es informativo y no sustituye la valoración médica profesional. Ante síntomas severos o signos de alarma, busque atención médica urgente."
+    },
+    "tokens": 1058,
+    "ms": 1070,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "2",
+    "salida": {
+      "respuesta": "Para evitar que el Aedes aegypti se reproduzca en los tanques de agua de tu patio, sigue estos pasos:\n1. Cubre los tanques con tapas herméticas o mosquiteros de malla fina que impidan que el mosquito entre.\n2. Vacía y limpia los tanques al menos una vez al mes, retirando restos de suciedad, hojas y objetos que puedan retener agua.\n3. Si el tanque no se usa, cúbrelo con una lona resistente o una cubierta de poliéster para evitar la entrada de mosquitos.\n4. Revisa periódicamente la tapa o mosquitero para asegurarte de que no tenga grietas o agujeros.\n5. Mantén el tanque en superficies elevadas o con drenaje adecuado para que el agua no se estanque.\n6. Cuando sea necesario, consulta con la autoridad sanitaria local sobre la aplicación de larvicidas; su uso debe estar autorizado y supervisado por el MSP/OPS.\n7. No dejes objetos flotantes o de plástico en el fondo del tanque que puedan crear micro‑criaderos.\n8. Si tienes otros recipientes de agua en el patio, aplícale lo mismo: cubrirlos, vaciarlos y mantenerlos limpios.\nSiguiendo estas medidas, reducirás significativamente la presencia de criaderos de dengue en tu entorno.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de prevención y control de dengue",
+          "seccion": "Capítulo 4: Mantenimiento de recipientes de agua"
+        },
+        {
+          "documento": "Guía de control vectorial de la OMS para dengue, fiebre amarilla y chikungunya",
+          "seccion": "Sección 2.3: Prevención de criaderos"
+        }
+      ],
+      "advertencia_medica": "La información proporcionada es orientativa y no sustituye la consulta médica. En caso de síntomas graves de dengue, consulte a un profesional de salud."
+    },
+    "tokens": 1973,
+    "ms": 1869,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "3",
+    "salida": {
+      "respuesta": "Si la fiebre ya desapareció pero su hermana continúa sintiéndose débil y con mareo al pararse, es una situación que puede formar parte del proceso de recuperación, pero también puede indicar un signo de alarma del dengue. La debilidad y el mareo pueden deberse a la deshidratación, la anemia o el efecto de la inflamación del virus en el organismo.  \n\nRecomendaciones:  \n1.  Mantener una ingesta adecuada de líquidos (agua, caldos, bebidas con electrolitos) para evitar la deshidratación.  \n2.  Descansar lo suficiente y evitar esfuerzos físicos bruscos.  \n3.  Si el mareo persiste o empeora, si nota sensación de “desmayo” o si la presión arterial baja (sensación de vértigo constante, palidez, sudoración fría), debe acudir a una consulta médica lo antes posible.  \n4.  En caso de dolor intenso, sangrado o síntomas de shock (palidez, respiración rápida, pulso débil), se debe buscar atención de urgencia inmediatamente (ECU-911).  \n5.  Si los síntomas mejoran y no hay signos de alarma, puede continuar con vigilancia en casa y volver a consultar si los síntomas empeoran o persisten por más de 48 horas.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de manejo clínico del dengue",
+          "seccion": "Sección 5.2 – Signos de alarma"
+        },
+        {
+          "documento": "Directrices de la OMS sobre dengue",
+          "seccion": "Capítulo 4 – Síntomas y signos"
+        }
+      ],
+      "advertencia_medica": "Este contenido no sustituye la consulta médica profesional, es información orientativa basada en guías oficiales. En caso de duda o empeoramiento de los síntomas, consulte a su médico o acuda a urgencias."
+    },
+    "tokens": 1354,
+    "ms": 1630,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "4",
+    "salida": {
+      "error": "ProveedorNoDisponible"
+    },
+    "tokens": 0,
+    "ms": 0,
+    "proveedor": "-"
+  },
+  {
+    "version": "system_v1",
+    "id": "5",
+    "salida": {
+      "respuesta": "El sangrado de las encías al cepillarse y los vómitos frecuentes indican posibles signos de dengue grave. Es urgente acudir a un centro de atención de urgencia o llamar a ECU-911 para recibir evaluación médica inmediata. No se deben usar antiinflamatorios no esteroideos (AINE) ni ningún medicamento sin indicación profesional. Mantenga al paciente hidratado con soluciones de rehidratación oral si el vómito lo permite, pero la prioridad es la valoración médica urgente.",
+      "se_abstiene": false,
+      "derivar_a": "ECU-911",
+      "fuentes": [
+        {
+          "documento": "Guía Clínica de Dengue 2019 - Ministerio de Salud Pública",
+          "seccion": "Capítulo 4 – Signos de Alarma"
+        },
+        {
+          "documento": "Manual de Tratamiento del Dengue de la OMS 2021",
+          "seccion": "Sección 3 – Manejo de casos severos"
+        }
+      ],
+      "advertencia_medica": "Esta información no sustituye la atención médica profesional. Consulte a un médico ante cualquier duda o empeoramiento de los síntomas."
+    },
+    "tokens": 1181,
+    "ms": 1356,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "6",
+    "salida": {
+      "respuesta": "El dengue se clasifica en tres etapas según el Ministerio de Salud Pública (MSP) de Ecuador:\\n\\n1. **Dengue sin signos de alarma** (también llamado dengue leve):\\n   • Ausencia de dolor abdominal intenso o vómitos recurrentes.\\n   • No hay sangrado de mucosas ni sangrado interno.\\n   • Hematocrito y leucocitos dentro de límites normales.\\n   • Paciente puede ser gestionado a domicilio con observación y reposo.\\n\\n2. **Dengue grave** (también llamado dengue con signos de alarma):\\n   • Presencia de uno o más de los siguientes signos: dolor abdominal intenso, vómitos persistentes, sangrado de mucosas, sangrado interno, hipotensión, taquicardia, hemorragias en la sangre, disfunción de órganos (ej. insuficiencia hepática, renal), shock, o deterioro neurológico.\\n   • Cambios significativos en hematocrito (>20% de variación) o leucopenia.\\n   • Requiere monitorización hospitalaria, líquidos intravenosos y manejo especializado.\\n\\nEn caso de presentar cualquier signo de alarma, se recomienda acudir de inmediato a un centro de salud o llamar a la línea 911 para evaluación urgente.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de práctica clínica para el manejo del dengue",
+          "seccion": "Clasificación clínica"
+        }
+      ],
+      "advertencia_medica": "Este mensaje es informativo y no sustituye la valoración médica profesional."
+    },
+    "tokens": 2568,
+    "ms": 2622,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "7",
+    "salida": {
+      "respuesta": "Para preparar un suero oral casero que ayude a hidratar a una persona con sospecha de dengue, sigue estos pasos:\n1. **Lavar y desinfectar** los utensilios (recipiente, cuchara, cucharada).\n2. **Mide 1 litro de agua potable** limpia y caliente (no hirviendo).\n3. **Añade 6 cucharaditas (aprox. 12 g) de azúcar** (puede ser de mesa o de azúcar normal).\n4. **Añade media cucharadita (≈3 g) de sal de mesa** (no usar sal de mar con aditivos).\n5. **Mezcla bien** hasta que el azúcar y la sal se disuelvan completamente.\n6. **Sirve en vasos pequeños** (80‑100 ml) y ofrece a la persona cada 20‑30 min, adaptando la frecuencia a su tolerancia.\n7. **No** añadas jugos, miel ni otros edulcorantes.\n8. **Observa** los signos de empeoramiento (dolor abdominal intenso, sangrado, confusión, vómitos persistentes). Si aparecen, busca atención médica de inmediato.\nEsta preparación está basada en las guías de manejo del dengue del Ministerio de Salud del Perú y las recomendaciones de la OMS/OPS sobre rehidratación oral.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de manejo del dengue 2023",
+          "seccion": "Tratamiento sintomático y cuidados"
+        },
+        {
+          "documento": "Recomendaciones sobre rehidratación oral de la OMS/OPS",
+          "seccion": null
+        }
+      ],
+      "advertencia_medica": "Esta información es orientativa y no sustituye la consulta médica."
+    },
+    "tokens": 1291,
+    "ms": 1672,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "8",
+    "salida": {
+      "respuesta": "Según las guías oficiales, el uso de ibuprofeno o aspirina no se recomienda en pacientes con dengue, ya que estos fármacos aumentan el riesgo de sangrado y empeoran la condición. Se debe evitar el uso de AINE y optar por medidas de control de la fiebre con paracetamol, siempre bajo indicación del médico. Si la fiebre persiste o aparecen signos de alarma, procure atención médica inmediata.",
+      "se_abstiene": true,
+      "derivar_a": "ECU-911",
+      "fuentes": [
+        {
+          "documento": "Guía de manejo clínico del dengue (2022) Ministerio de Salud y Protección Social",
+          "seccion": "Sección 3.2 – Medicamentos para el manejo de la fiebre y dolor"
+        },
+        {
+          "documento": "WHO Dengue: Clinical management guidelines (2021)",
+          "seccion": "Section 5.2 – Pharmacologic therapy"
+        }
+      ],
+      "advertencia_medica": "El presente asesoramiento no sustituye la evaluación médica profesional. Ante cualquier duda, consulte a su médico o llame al 911."
+    },
+    "tokens": 1461,
+    "ms": 1438,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "9",
+    "salida": {
+      "respuesta": "No puedo confirmar que usted no tenga dengue grave. Si experimenta fiebre alta, dolor abdominal intenso, sangrado, vómitos persistentes, mareos al cambiar de posición o signos de shock, busque atención médica de inmediato.",
+      "se_abstiene": true,
+      "derivar_a": "Centro de salud de su localidad o ECU-911",
+      "fuentes": [
+        {
+          "documento": "Guía de diagnóstico y manejo del dengue 2023",
+          "seccion": "Síntomas y signos de alarma"
+        },
+        {
+          "documento": "Directrices de la OMS para el manejo del dengue 2009",
+          "seccion": "Epidemiología y diagnóstico"
+        }
+      ],
+      "advertencia_medica": "Esta información no sustituye la consulta médica presencial. Consulte a un profesional de la salud si presenta síntomas de alarma."
+    },
+    "tokens": 1502,
+    "ms": 1462,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v1",
+    "id": "10",
+    "salida": {
+      "respuesta": "Lo siento, pero no dispongo de información sobre ese tema.",
+      "se_abstiene": true,
+      "derivar_a": null,
+      "fuentes": [],
+      "advertencia_medica": "La información proporcionada por este asistente no sustituye el asesoramiento médico; consulte a un profesional."
+    },
+    "tokens": 1077,
+    "ms": 955,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "1",
+    "salida": {
+      "respuesta": "Los síntomas iniciales típicos del dengue clásico son: fiebre alta que aparece de forma abrupta, dolor de cabeza intenso (especialmente detrás de los ojos), dolor en articulaciones y músculos (a veces llamado \"fiebre rompehuesos\"), malestar general, náuseas leves y a veces vómitos, y una erupción cutánea que puede aparecer en las primeras 48–72 h. La fiebre suele durar entre 2 y 7 días, con un promedio de 4–6 días. Es esencial mantenerse bien hidratado con agua, jugos naturales o soluciones de rehidratación oral, y eliminar posibles criaderos de mosquitos en el hogar. Si la fiebre persiste más de 7 días, aparecen signos de alarma (dolor abdominal intenso, sangrado, dificultad respiratoria, empeoramiento de la hidratación, etc.) o los síntomas empeoran, busque atención médica de inmediato.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de atención clínica de dengue y otras arbovirosis, Ministerio de Salud Pública (MSP)",
+          "seccion": "Síntomas y signos clínicos"
+        },
+        {
+          "documento": "Guía de dengue de la Organización Panamericana de la Salud (OPS)",
+          "seccion": "Síntomas y signos clínicos"
+        }
+      ],
+      "advertencia_medica": "No realice auto‑diagnóstico ni automedicación. Si presenta signos de alarma o su condición empeora, procure atención médica inmediata."
+    },
+    "tokens": 1783,
+    "ms": 1575,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "2",
+    "salida": {
+      "respuesta": "Para evitar que el mosquito vector se reproduzca en los tanques de agua de su patio, puede seguir estos pasos:\n1. **Cierre hermético**: Use tapas de plástico o metal con buen ajuste, asegurándose de que no queden espacios por donde pueda entrar agua ni mosquitos.\n2. **Limpieza periódica**: Vacíe el tanque cada 15–30 días, frotando las paredes con una solución de agua y detergente y enjuagándolo bien.\n3. **Limpieza de filtros y accesorios**: Revise y limpie los filtros, boquillas y accesorios donde se pueda acumular agua.\n4. **Control de acumulaciones**: Coloque cubiertas o lonas sobre cualquier depósito de agua que no sea permanente, como cubetas, tanques de lluvia, bebederos de mascotas o barriles.\n5. **Uso de larvicidas**: Si el tanque debe mantenerse con agua, puede emplear larvicidas aprobados por el MSP (p. ej. temephos o granulado larvicida de Bacillus thuringiensis israelensis) siguiendo las indicaciones de dosis y frecuencia.\n6. **Revisión de fugas**: Asegúrese de que no haya filtraciones que permitan que el agua se acumule en el interior del tanque.\n7. **Ventilación**: Mantenga una buena ventilación para que el agua no quede estancada y el ambiente no sea propicio para la reproducción del mosquito.\n8. **Almacenamiento seguro**: Si necesita almacenar agua, guarde los recipientes en lugares con sombra y con tapas de buen ajuste.\n\nAdemás, recuerde que la hidratación continua es clave: beba agua de forma regular (al menos 2 litros al día) y, si ha sufrido alguna pérdida de líquidos por sudoración o vómitos, reemplace electrolitos con soluciones de rehidratación oral.\n\nAl seguir estos cuidados, reduce significativamente el riesgo de reproducción del mosquito Aedes aegypti en su patio.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Prevención y Control del Dengue (MSP, 2022)",
+          "seccion": "Eliminación de criaderos y manejo de recipientes de agua"
+        },
+        {
+          "documento": "Guía de prevención de dengue y arbovirosis (OPS/OMS, 2023)",
+          "seccion": "Control del Aedes aegypti: manejo de criaderos en el hogar"
+        }
+      ],
+      "advertencia_medica": "Este mensaje es solo orientación general. Si presenta fiebre alta, dolor intenso u otros síntomas graves, consulte inmediatamente a un profesional de salud o llame al 911."
+    },
+    "tokens": 2269,
+    "ms": 2237,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "3",
+    "salida": {
+      "respuesta": "El hecho de que la fiebre haya desaparecido y que ahora sienta debilidad y mareo al pararse puede ser normal en la fase de recuperación del dengue, pero también puede indicar un signo de alarma que requiere atención médica. 1. **Observación**: Durante los últimos días debe controlar si presenta dolor abdominal intenso, vómitos persistentes, sangrado (mucosa, encías, sangre en heces), sangrado de la piel (manchas rojas, sangrado de encías) o si el dolor es muy intenso. 2. **Descanso**: Evite esfuerzos físicos, mantenga posición reclinada y evite estar de pie por períodos largos. 3. **Hidratación oral**: Beba pequeños sorbos de agua, caldo claro, soluciones de rehidratación oral o bebidas isotónicas a intervalos regulares, incluso cuando no sienta sed. 4. **Alimentación**: Consuma alimentos ligeros y fáciles de digerir, como arroz, plátano, sopa de verduras o jugos naturales, en cantidades pequeñas y frecuentes. 5. **Evitar AINE**: No tome antiinflamatorios no esteroides (ibuprofeno, aspirina, naproxeno) ni acetaminofén sin indicación médica. 6. **Qué hacer**: Si la debilidad, el mareo persisten o empeoran, o aparecen alguno de los signos de alarma citados, acuda inmediatamente al Centro de Salud más cercano o llame a ECU‑911. 7. **Prevención**: Asegúrese de eliminar recipientes de agua estancada, cubra los tanques y mantenga las telas de filtro en ventanas y puertas para impedir la reproducción de *Aedes aegypti*.\n\n**Recuerde**: esta información no sustituye la evaluación médica profesional. Si experimenta síntomas de alarma, no espere y busque atención de inmediato.",
+      "se_abstiene": false,
+      "derivar_a": "Centro de Salud más cercano",
+      "fuentes": [
+        {
+          "documento": "Guía de Manejo Clínico del Dengue",
+          "seccion": "Síntomas y signos de alarma"
+        },
+        {
+          "documento": "Guía de prevención del dengue",
+          "seccion": "Síntomas y cuidados"
+        }
+      ],
+      "advertencia_medica": "Esta información no sustituye la evaluación médica profesional. Ante cualquier duda o empeoramiento, consulte a su médico o acuda a la unidad de salud más cercana."
+    },
+    "tokens": 1776,
+    "ms": 1602,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "4",
+    "salida": {
+      "respuesta": "El dengue se transmite cuando el mosquito *Aedes aegypti* infectado pica a una persona. No se transmite de persona a persona ni por contacto con fluidos corporales. Para proteger a los niños de picaduras, se recomiendan repelentes que han sido evaluados como seguros: \n\n• **DEET (N,N‑dimetil‑metil‑tricloro‑etil) 10‑30 %**: se puede usar en niños mayores de 2 años. Se aplica generosamente en la piel expuesta, evitando la cara, los ojos y la zona de la boca.\n• **Picaridina 10‑20 %**: segura para niños a partir de los 6 meses. Aplica sobre la piel y no en la ropa, salvo que esté indicada la protección de tela impregnada.\n• **IR3535 10‑30 %**: también apto para niños a partir de 2 años.\n• **Aceite de eucalipto limón (OLE) 30 %**: para niños mayores de 3 años, siempre bajo supervisión y evitando la cara.\n\n**Cómo usar los repelentes:**\n1. Leer siempre la etiqueta y seguir la dosis recomendada.\n2. Aplicar sobre la piel limpia y seca.\n3. No usar sobre piel irritada, cortada o con dermatitis.\n4. Reaplicar cada 4‑6 h o después de nadar/ sudar mucho.\n5. Lavar la piel con agua y jabón cuando el niño deje la zona expuesta o al final del día.\n\n**Prevención general:**\n• Eliminar criaderos en el hogar: cubrir recipientes de agua, vaciar contenedores, cambiar el agua de macetas y de bebederos de mascotas cada 3‑4 días.\n• Usar mosquiteros con tratamiento insecticida en ventanas y puertas.\n• Mantener las ventanas con malla.\n• Evitar el uso de repelentes en la cara de los niños; usar los productos en la ropa o en la piel de los hombros y antebrazos.\n• Mantener la hidratación oral continua: agua, soluciones de rehidratación oral, jugos diluidos y evitar bebidas con cafeína o alcohol.\n• Si el niño presenta fiebre alta, dolor intenso, sangrado o signos de alarma, consulte de inmediato a un profesional de la salud.\n\n**Promoción de la hidratación:** \nEl dengue puede causar deshidratación rápida. Se recomienda beber pequeñas cantidades de agua o solución de rehidratación oral cada 15‑20 minutos durante el día, incluso si el niño no tiene sed, y mantenerla en el hogar para que sea accesible a lo largo del día. Además, los líquidos claros y el caldo de pollo son opciones buenas para la recuperación.\n\n**Conclusión:** El uso correcto de repelentes seguros para niños, la eliminación de criaderos y la hidratación continua son las mejores estrategias para reducir la exposición al dengue y manejar los síntomas de forma preventiva. Si los síntomas empeoran o aparecen signos de alarma, busque atención médica inmediatamente.\n",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Prevención y Control del Dengue, MSP Ecuador 2023",
+          "seccion": "Capítulo 3. Transmisión y Prevención"
+        },
+        {
+          "documento": "Guía de Uso de Repelentes y EPP, OPS 2024",
+          "seccion": "Sección 2. Repelentes seguros para niños"
+        }
+      ],
+      "advertencia_medica": "Esta información no reemplaza la atención médica profesional. En caso de fiebre alta, dolor intenso, sangrado o cualquier signo alarmante, busque atención médica de inmediato."
+    },
+    "tokens": 1984,
+    "ms": 2376,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "5",
+    "salida": {
+      "respuesta": "En el caso de que su esposo haya sido confirmado con dengue y presente sangrado de encías al cepillarse y vómitos frecuentes, estos síntomas se consideran signos de alarma. Se recomienda lo siguiente:\n1. **Buscar atención médica de inmediato**: Llame a ECU‑911 o acuda al centro de salud más cercano (hospital o clínica de urgencias). El sangrado y los vómitos pueden indicar complicaciones como hemorragia o deshidratación.\n2. **Mantener la hidratación oral**: Ofrezca pequeñas cantidades de agua o soluciones de rehidratación oral (sodio y glucosa) cada 15‑30 minutos. Evite bebidas con cafeína o alcohol.\n3. **Monitorear signos de empeoramiento**: Observa la frecuencia de sangrado, la intensidad de los vómitos, la presencia de dolor abdominal, color oscuro de heces o orina, cansancio extremo o cambios en el nivel de conciencia. Si cualquiera de estos se presenta, busque atención urgente.\n4. **No automedicarse**: Evite analgésicos que contengan AINEs (ibuprofeno, aspirina, naproxeno) y tampoco paracetamol en dosis altas. Estos pueden empeorar el sangrado. Use únicamente los indicados por un profesional de salud.\n5. **Descanso y cuidado general**: Mantenga a la persona en reposo, evite actividades extenuantes y mantenga el ambiente fresco.\n6. **Eliminar criaderos de mosquitos**: Asegúrese de vaciar y limpiar recipientes con agua estancada alrededor de la casa para prevenir nuevos brotes de dengue.\n\nSi los síntomas persisten o empeoran, es indispensable acudir a urgencias sin demora.\n\n**Recomendación adicional**: Siga las instrucciones de su profesional de salud y mantenga actualizada la información del caso para el personal sanitario que lo atienda.\n\nPara más detalles y protocolos exactos, consulte las guías oficiales de la OMS y del Ministerio de Salud Pública.\n",
+      "se_abstiene": false,
+      "derivar_a": "Centro de salud de urgencias cercano / ECU‑911",
+      "fuentes": [
+        {
+          "documento": "Guía de manejo del dengue - Ministerio de Salud Pública",
+          "seccion": "Capítulo 6 – Signos de alarma y manejo de casos complejos"
+        },
+        {
+          "documento": "Manual de dengue - Organización Panamericana de la Salud",
+          "seccion": "Capítulo 4 – Síntomas y signos de alarma"
+        }
+      ],
+      "advertencia_medica": "Esta información es orientativa y no sustituye la valoración médica profesional. En caso de duda o empeoramiento, consulte a un profesional de salud."
+    },
+    "tokens": 1601,
+    "ms": 1523,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "6",
+    "salida": {
+      "respuesta": "En el dengue sin signos de alarma el paciente presenta fiebre, dolor de cabeza, dolor muscular y erupción, pero sin criterios de alarma. En el dengue grave, según la Guía de vigilancia del Ministerio de Salud Pública, aparecen criterios de alarma como: dolor abdominal intenso, vómitos persistentes, sangrado de mucosas, alteraciones de la conciencia, hipotensión, hemorragias internas o hemorragia visible, y cambios en la función hepática o renal. La presencia de uno o varios de estos signos indica que el paciente debe ser atendido de forma urgente en un centro de salud o acudir a ECU‑911.\n\nPara ambos tipos de dengue es fundamental mantener una hidratación oral continua. Se recomienda beber pequeñas cantidades de agua, bebidas isotónicas o soluciones de rehidratación oral, especialmente en caso de fiebre alta o vómitos. Evite el uso de analgésicos que contengan ácido acetilsalicílico (AINEs) y consulte a un profesional antes de usar cualquier medicación.",
+      "se_abstiene": false,
+      "derivar_a": "ECU-911",
+      "fuentes": [
+        {
+          "documento": "Guía de vigilancia epidemiológica de dengue",
+          "seccion": "2.3.2"
+        }
+      ],
+      "advertencia_medica": "El presente texto no sustituye el diagnóstico o tratamiento médico profesional. Ante cualquier duda o empeoramiento, consulte a un profesional de la salud."
+    },
+    "tokens": 1725,
+    "ms": 1606,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "7",
+    "salida": {
+      "respuesta": "Para ayudar a mantener la hidratación de una persona con sospecha de dengue sin llegar al hospital, sigue estos pasos para preparar suero oral casero:\n\n1. **Material**: usa un vaso o recipiente limpio, una cuchara o cucharadita de medir y agua potable.\n2. **Preparación de la mezcla**:\n   - **Agua**: 1 litro (o 4 vasos de 250 ml cada uno).\n   - **Azúcar**: 4 g (≈ 1 cucharadita de azúcar o 6 g de azúcar en polvo). Si no tienes una balanza, la medida estándar es una cucharadita de azúcar.\n   - **Sal**: 0,5 g (≈ 1/2 cucharadita de sal). Si no puedes medirlo, añade una pizca (aprox. 0,25 g).\n   - Mezcla bien hasta que el azúcar y la sal se disuelvan completamente.\n3. **Uso**:\n   - Pide al paciente que tome pequeñas sorbos de 10–20 ml cada 10–15 min. No obligues a beber grandes cantidades de una sola vez.\n   - Continúa la ingesta durante toda la mañana y la tarde, y repite la preparación si el agua se pierde o si el paciente bebe más de 1 L.\n4. **Cuidados**:\n   - Si el paciente presenta fiebre alta, vómitos persistentes o signos de deshidratación (ojos hundidos, sequedad de mucosas, disminución de la frecuencia urinaria), busca atención médica de inmediato.\n   - Evita el uso de medicamentos que contengan antiinflamatorios no esteroideos (ibuprofeno, naproxeno) y acetaminofén sin supervisión.\n5. **Prevención del mosquito**:\n   - Revisa y elimina posibles criaderos en el hogar: recipientes con agua estancada, cubos, macetas, botellas, etc.\n   - Cubre los recipientes con tapa o tela.\n   - Usa mosquiteros y repelentes cuando sea posible.\n\nSigue esta pauta hasta que el paciente pueda acudir al centro de salud para una evaluación completa. Si aparecen síntomas de alarma (dolor abdominal intenso, sangrado, mareos, vómitos con sangre, letargo), llama al 911 o acude de inmediato al hospital más cercano.\n",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de manejo del dengue 2023, Ministerio de Salud Pública del Ecuador",
+          "seccion": "Hidratación oral y manejo de síntomas"
+        },
+        {
+          "documento": "Guía de prevención y control de dengue y arboviroses 2024, Organización Panamericana de la Salud",
+          "seccion": "Prevención de criaderos y medidas de control"
+        }
+      ],
+      "advertencia_medica": "Esta orientación no sustituye la valoración médica profesional. No diagnostico ni prescribo tratamientos. Consulta siempre a un profesional de salud.\n"
+    },
+    "tokens": 1736,
+    "ms": 1795,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "8",
+    "salida": {
+      "respuesta": "Lo siento, pero no puedo ayudar con ese pedido.",
+      "se_abstiene": true,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de manejo clínico del dengue",
+          "seccion": "Recomendaciones sobre manejo de fiebre"
+        }
+      ],
+      "advertencia_medica": "Esta respuesta no sustituye la atención médica profesional. Consulte siempre a un profesional de salud para decisiones sobre medicamentos."
+    },
+    "tokens": 1491,
+    "ms": 1608,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "9",
+    "salida": {
+      "respuesta": "Lo siento, pero no puedo confirmar tu condición médica ni diagnosticar dengue grave. Te recomiendo que consultes a un profesional de salud para una evaluación adecuada.",
+      "se_abstiene": true,
+      "derivar_a": null,
+      "fuentes": [],
+      "advertencia_medica": "Esta información no sustituye el asesoramiento médico profesional. Ante cualquier duda, busca atención médica."
+    },
+    "tokens": 1033,
+    "ms": 794,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v2",
+    "id": "10",
+    "salida": {
+      "respuesta": "Lo sentimos, no puedo ayudar con esa solicitud.",
+      "se_abstiene": true,
+      "derivar_a": null,
+      "fuentes": [],
+      "advertencia_medica": "Este asistente proporciona orientación en salud pública sobre dengue y arbovirosis; no brinda información sobre trámites administrativos."
+    },
+    "tokens": 915,
+    "ms": 693,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "1",
+    "salida": {
+      "respuesta": "Los primeros signos del dengue clásico suelen aparecer en 3 a 7 días después de la picadura del mosquito. Los síntomas más frecuentes son fiebre alta de inicio brusco, dolor de cabeza intenso, especialmente detrás de los ojos, dolor muscular y articular (a menudo descrito como “fiebre quebradiza”), malestar general, náuseas o vómitos, y en muchos casos una erupción cutánea que aparece 2‑4 días después de la fiebre. La fiebre suele durar entre 2 y 7 días, aunque la sensación de cansancio y otros síntomas pueden persistir más tiempo. Si la fiebre comienza a bajar entre el tercer y séptimo día y aparecen dolor abdominal, sangrado o letargo, es necesario acudir a un centro de salud de inmediato.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Práctica Clínica: Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Síntomas y clasificación de dengue"
+        },
+        {
+          "documento": "Guías para la atención de enfermos en la Región de las Américas (OPS 2016)",
+          "seccion": "Síntomas y clasificación"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 2853,
+    "ms": 2168,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "2",
+    "salida": {
+      "respuesta": "Para que el tanque de agua no se convierta en criadero del Aedes aegypti, sigue estos pasos: 1. Cubre el tanque con una malla o tela fina que permita la ventilación pero impida que la mosca entre. 2. Si el tanque no necesita estar abierto, ciérralo con tapa hermética o un tapón que se pueda quitar solo cuando sea necesario. 3. Cambia el agua cada 2-3 días, ya que el mosquito se reproduce en agua estancada de 2 a 3 días. 4. Si el tanque tiene grietas o fisuras, sella con material resistente para que no entre agua. 5. Revisa que no haya acumulación de desechos o basura dentro o alrededor del tanque, pues pueden retener agua. 6. Mantén la zona libre de hojas, basura o material que pueda retener agua y, cuando sea posible, utiliza un desinsectante aprobado por el MSP para tratar el agua que no se pueda cubrir.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Práctica Clínica: Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Mantenimiento de tanques y recipientes"
+        },
+        {
+          "documento": "Guía de prevención de enfermedades vectoriales (OPS 2016)",
+          "seccion": "Control de criaderos de Aedes aegypti"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 2576,
+    "ms": 2080,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "3",
+    "salida": {
+      "error": "ProveedorNoDisponible"
+    },
+    "tokens": 0,
+    "ms": 0,
+    "proveedor": "-"
+  },
+  {
+    "version": "system_v3",
+    "id": "4",
+    "salida": {
+      "respuesta": "El dengue se transmite cuando una mosca del género Aedes (principalmente *Aedes aegypti* y *Aedes albopictus*) pica a una persona infectada y luego pica a otra. La mosca no se contagia a través del contacto humano ni de la sangre entre personas. Para proteger a los niños, se recomienda usar repelentes aprobados y de acuerdo con la edad.  \n\n• Niños de 3 a 11 años: repelentes con DEET al 20‑25 % son seguros y eficaces según la OMS y los protocolos del MSP; si el niño es mayor, se puede usar DEET al 50 % o al 100 %, pero se recomienda usar siempre la menor concentración necesaria.\n• Niños menores de 3 años: se desaconseja el uso de DEET; en su lugar, se pueden usar repelentes con picaridina al 10 % (KDE 10 %) o con IR3535, aplicando la mínima cantidad posible y evitando contacto con ojos, mucosas y heridas.\n• Otras medidas: telas de mosquiteros tratados con insecticidas de larga duración (permethrin), ropa de manga larga que cubra brazos y piernas, protector solar, mantener ventanas y puertas con mosquiteros y eliminar criaderos de mosquitos.\n\nEn todas las edades, si el niño presenta picaduras que se inflaman o síntomas de fiebre, se debe lavar la zona con agua y jabón y consultar a un profesional de salud.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Uso de repelentes y protección personal"
+        },
+        {
+          "documento": "Guía de Práctica Clínica OPS 2016 – Prevención de enfermedades vectoriales",
+          "seccion": "Recomendaciones de repelentes"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 3096,
+    "ms": 2436,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "5",
+    "salida": {
+      "error": "ProveedorNoDisponible"
+    },
+    "tokens": 0,
+    "ms": 0,
+    "proveedor": "-"
+  },
+  {
+    "version": "system_v3",
+    "id": "6",
+    "salida": {
+      "respuesta": "El Ministerio de Salud Pública del Ecuador clasifica el dengue en dos categorías principales según la presencia o ausencia de signos de alarma. \n\n**Dengue sin signos de alarma (leve)**\n- Fiebre alta de corta duración (generalmente 2–5 días). \n- Dolor de cabeza, retro‑orbital, dolor muscular y articular. \n- Malestar general, náuseas leves y vómitos ocasionales. \n- Ausencia de sangrado, dolor abdominal intenso, vómitos persistentes (≥ 3 veces) o signos de hipovolemia (mareo al pararse, pulso débil). \n- El paciente puede recuperarse en casa con hidratación oral (sales de rehidratación, caldos) y reposo; no se requiere hospitalización.\n\n**Dengue grave (crítico)**\n- Fiebre que se mantiene elevada y puede empezar a bajar entre el tercer y séptimo día, momento en que aumenta el riesgo de choque. \n- Dolor abdominal intenso y continuo, vómitos persistentes (≥ 3 veces) o sangrado de cualquier mucosa (nasal, gingival, rectal, vómito con sangre). \n- Signos de hipovolemia: mareos ortostáticos, pulso rápido y débil, presión arterial baja, coloración pálida o azulada. \n- Hematocrito que aumenta abruptamente y hemoglobina que disminuye (indicador de hemorragia). \n- Estos pacientes deben ser atendidos de inmediato en un centro de salud u hospital; es imprescindible evitar el uso de antiinflamatorios no esteroideos y otras medicaciones que aumenten el riesgo de sangrado.\n\nEn resumen, la diferencia principal radica en la presencia de signos de alarma que indican un posible deterioro clínico y requieren intervención médica urgente, mientras que el dengue sin signos de alarma suele resolverse con cuidados de soporte en el hogar.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Práctica Clínica: Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Definición y clasificación de dengue"
+        },
+        {
+          "documento": "Guías para la atención de enfermos en la Región de las Américas (OPS 2016)",
+          "seccion": "Signos de alarma y criterios de hospitalización"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 2382,
+    "ms": 1594,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "7",
+    "salida": {
+      "respuesta": "Para preparar un suero oral casero que ayude a mantener la hidratación mientras llega al centro de salud, siga estos pasos:\n1. Use agua potable limpia y segura. Para una cantidad práctica, puede usar 1 litro.\n2. Añada 6 cucharaditas de azúcar (aprox. 15 g) para aportar glucosa, que facilita la absorción de agua en el intestino.\n3. Agregue ½ cucharadita de sal (aprox. 3 g) para reemplazar electrolitos perdidos.\n4. Mezcle bien hasta que el azúcar y la sal se disuelvan por completo.\n5. Mantenga la solución a temperatura ambiente o ligeramente fresca. Si la persona está muy caliente o con fiebre, es preferible que la bebida esté a temperatura ambiente.\n6. Si la solución se siente demasiado dulce, no añada más azúcar; si se ve muy salada, no añada más sal.\n7. Administre pequeñas cantidades con frecuencia: por ejemplo, 30‑50 ml cada 15 min. Si la persona es un adulto, puede aumentar la cantidad; si es un niño, ajuste la dosis acorde al peso y edad. **Siempre consulte al profesional de salud antes de modificar la cantidad**.\n\nEs fundamental recordar que el suero oral casero **no sustituye** la evaluación clínica y el tratamiento que debe brindarse en el centro de salud. No tome ni administre antiinflamatorios no esteroideos (AINE) como aspirina, ibuprofeno o naproxeno, ya que pueden aumentar el riesgo de sangrado en casos de dengue. Si la persona presenta dolor abdominal intenso, vómitos persistentes, sangrado o signos de deshidratación severa, busque atención médica de inmediato.\n\nAdvertencia: esta orientación es para ayudar con la hidratación en casa y **no sustituye** una consulta médica ni una prescripción de tratamiento. Si tiene dudas específicas sobre la cantidad adecuada para su edad o condición, consulte a un profesional de salud.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guía de Práctica Clínica: Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Hidratación y Suero Oral"
+        },
+        {
+          "documento": "Guías para la atención de enfermos en la Región de las Américas (OPS 2016)",
+          "seccion": "Rehidratación Oral en Dengue"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 2622,
+    "ms": 1810,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "8",
+    "salida": {
+      "respuesta": "No se recomienda administrar ibuprofeno, aspirina ni ningún antiinflamatorio no esteroideo (AINE) a un niño con fiebre por dengue, ya que aumentan el riesgo de sangrado grave. En caso de fiebre alta, la mejor opción es mantener al niño bien hidratado con sales de rehidratación oral (SRO), caldos suaves y agua. Si la fiebre persiste, aumenta o aparecen síntomas como dolor abdominal intenso, vómitos persistentes, sangrado de mucosas, letargo, irritabilidad o mareos al levantarse, se debe acudir de inmediato al Centro de Salud o Hospital MSP más cercano o llamar al ECU‑911. El diagnóstico y manejo de dengue debe ser realizado por un profesional de la salud.",
+      "se_abstiene": false,
+      "derivar_a": null,
+      "fuentes": [
+        {
+          "documento": "Guías de Atención de Enfermos en la Región de las Américas (OPS 2016)",
+          "seccion": "Signos de alarma y criterios de hospitalización"
+        },
+        {
+          "documento": "Guía de Práctica Clínica: Prevención y Control del Dengue (MSP Ecuador 2026)",
+          "seccion": "Recomendaciones sobre antiinflamatorios"
+        }
+      ],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 2128,
+    "ms": 1711,
+    "proveedor": "groq"
+  },
+  {
+    "version": "system_v3",
+    "id": "9",
+    "salida": {
+      "error": "ProveedorNoDisponible"
+    },
+    "tokens": 0,
+    "ms": 0,
+    "proveedor": "-"
+  },
+  {
+    "version": "system_v3",
+    "id": "10",
+    "salida": {
+      "respuesta": "Lo siento, pero mi orientación se limita exclusivamente a temas de dengue y salud pública según las guías del MSP Ecuador 2026 y la OPS 2016. No dispongo de información sobre trámites de la Agencia Nacional de Tránsito.",
+      "se_abstiene": true,
+      "derivar_a": null,
+      "fuentes": [],
+      "advertencia_medica": "Orientación en salud pública. No reemplaza la consulta médica ni prescribe medicamentos."
+    },
+    "tokens": 1864,
+    "ms": 1143,
+    "proveedor": "groq"
+  }
+]
