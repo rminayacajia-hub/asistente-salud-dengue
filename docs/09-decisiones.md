@@ -213,3 +213,41 @@ Se adopta la **Opción 2**: El directorio hospitalario reside en `data/geosalud_
 * **Positivas:** Cero alucinación en geolocalización hospitalaria; exactitud garantizada en teléfonos y direcciones de emergencia; cumplimiento estricto de las directivas del seminario.
 * **Negativas asumidas:** Requiere mantener sincronizado el archivo JSON con los registros oficiales de la Dirección Nacional de Vigilancia Epidemiológica del MSP.
 
+---
+
+## Matriz de Cumplimiento de Seguridad (OWASP LLM Top 10 - 2025) y Privacidad (LOPDP Ecuador)
+
+Para certificar los controles exigidos en las Revisiones 3 y 4 de la Guía Estándar, se documenta el mapeo de riesgos y controles técnicos implementados:
+
+| Riesgo (OWASP LLM 2025) | Manifestación en el Caso 05 (Dengue) | Control Arquitectónico Implementado |
+|---|---|---|
+| **LLM01: Inyección de Prompt (Directa e Indirecta)** | El usuario ordena ignorar las reglas del MSP para obtener recetas de AINEs, o un texto externo intenta alterar el rol del sistema (Greshake et al., 2023). | 1. Validación estricta de longitud (`2` a `2000` caracteres) en `EntradaFlexibleChat` (`app/main.py`).<br>2. Delimitación de contexto recuperado con cabeceras explícitas (`=== GUÍAS OFICIALES OPS / MSP (RAG) ===`).<br>3. Enjaulado de instrucciones en `app/prompts/system_v3.md`.<br>4. Saneamiento de encabezados canónicos en `scripts/ingest.py`. |
+| **LLM02: Divulgación de Información Sensible** | Exposición de datos personales de salud (PII), revelación del *system prompt* o muestra de trazas crudas de error del proveedor. | 1. Arquitectura *stateless* sin base de datos de pacientes.<br>2. Telemetría en `logs/llm.jsonl` libre de PII (solo registra latencia, tokens y proveedor).<br>3. Captura de excepciones `ProveedorNoDisponible` y `SalidaInvalida` devolviendo mensajes amigables al ciudadano. |
+| **LLM06: Agencia Excesiva** | Un agente autónomo ejecuta acciones destructivas, consultas abiertas o toma decisiones clínicas sin supervisión (Anthropic, 2024). | 1. Mínimo privilegio: herramientas deterministas (`ubicar_establecimiento`, `_evaluar_regla_signos_alarma`) de **solo lectura**.<br>2. Flujo acotado sin bucles recursivos abiertos.<br>3. Confirmación humana explícita en el frontend antes de activar llamadas o derivaciones. |
+| **LLM09: Desinformación y Alucinación Clínica** | El modelo inventa fuentes normativas, recomienda medicamentos contraindicados (ibuprofeno/aspirina) o subestima un signo de alarma (Ji et al., 2023). | 1. **Cita obligatoria inyectada por código Python** (el LLM no genera el campo `fuentes`).<br>2. **Abstención verificada** (`distancia_maxima: 1.28` en `config/umbrales.json`).<br>3. Triaje de signos de alarma ejecutado 100% en Python determinista. |
+
+### Inventario de Tratamiento de Datos Personales (Cumplimiento Art. 10 y Art. 25 LOPDP Ecuador 2021)
+
+| Dato Recibido en Interfaz | ¿Se envía al LLM? | ¿Se almacena en Disco / BD / Logs? | Finalidad y Medida de Minimización |
+|---|:---:|:---:|---|
+| Consulta de síntomas / dudas preventivas | Sí (efímero) | **NO (0 bytes persistidos)** | Procesar la síntesis informativa en memoria RAM volátil. Suprimido de `logs/llm.jsonl`. |
+| Ciudad o Cantón (ej. Guayaquil, Manta) | Sí (contexto) | **NO** | Filtrar de forma determinista el catálogo público `data/geosalud_ecuador.json`. |
+| Nombre, Cédula, Dirección o Teléfono | No requerido | **NO (Prohibido)** | El aviso legal en la interfaz advierte no ingresar datos identificables; el sistema opera de forma 100% anónima. |
+
+---
+
+## Referencias Bibliográficas de Arquitectura y Seguridad (APA 7.ª Edición)
+
+1. **Anthropic.** (2024, 19 de diciembre). *Building effective agents*. https://www.anthropic.com/research/building-effective-agents
+2. **Es, S., James, J., Espinosa-Anke, L., & Schockaert, S.** (2024). RAGAS: Automated evaluation of retrieval augmented generation. *Proceedings of EACL 2024: System Demonstrations*. https://arxiv.org/abs/2309.15217
+3. **Gao, Y., Xiong, Y., Gao, X., Jia, K., Pan, J., Bi, Y., Dai, Y., Sun, J., Wang, M., & Wang, H.** (2024). Retrieval-augmented generation for large language models: A survey. *arXiv*. https://arxiv.org/abs/2312.10997
+4. **Greshake, K., Abdelnabi, S., Mishra, S., Endres, C., Holz, T., & Fritz, M.** (2023). Not what you've signed up for: Compromising real-world LLM-integrated applications with indirect prompt injection. *Proceedings of the 16th ACM Workshop on Artificial Intelligence and Security*. https://arxiv.org/abs/2302.12173
+5. **Ji, Z., Lee, N., Frieske, R., Yu, T., Su, D., Xu, Y., Ishii, E., Bang, Y., Madotto, A., & Fung, P.** (2023). Survey of hallucination in natural language generation. *ACM Computing Surveys, 55*(12), 1–38. https://doi.org/10.1145/3571730
+6. **Lewis, P., Perez, E., Piktus, A., Petroni, F., Karpukhin, V., Goyal, N., Küttler, H., Lewis, M., Yih, W., Rocktäschel, T., Riedel, S., & Kiela, D.** (2020). Retrieval-augmented generation for knowledge-intensive NLP tasks. *Advances in Neural Information Processing Systems, 33*. https://arxiv.org/abs/2005.11401
+7. **Ley Orgánica de Protección de Datos Personales (LOPDP).** Registro Oficial Suplemento 459, 26 de mayo de 2021. República del Ecuador.
+8. **Liu, N. F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F., & Liang, P.** (2024). Lost in the middle: How language models use long contexts. *Transactions of the Association for Computational Linguistics, 12*, 157–173. https://arxiv.org/abs/2307.03172
+9. **OWASP Foundation.** (2025). *OWASP Top 10 for Large Language Model Applications 2025*. https://genai.owasp.org/llm-top-10/
+10. **Schick, T., Dwivedi-Yu, J., Dessì, R., Raileanu, R., Lomeli, M., Zettlemoyer, L., Cancedda, N., & Scialom, T.** (2023). Toolformer: Language models can teach themselves to use tools. *Advances in Neural Information Processing Systems, 36*. https://arxiv.org/abs/2302.04761
+11. **Weidinger, L., Mellor, J., Rauh, M., Griffin, C., Uesato, J., Huang, P.-S., et al.** (2021). Ethical and social risks of harm from language models. *arXiv*. https://arxiv.org/abs/2112.04359
+12. **Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., & Cao, Y.** (2023). ReAct: Synergizing reasoning and acting in language models. *International Conference on Learning Representations (ICLR)*. https://arxiv.org/abs/2210.03629
+

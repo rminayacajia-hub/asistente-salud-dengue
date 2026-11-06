@@ -137,8 +137,9 @@ tests/test_semver_bumper.py PASSED                                     [100%]
 
 ---
 
-## 6. Actualización de Decisiones de Arquitectura (ADRs Semana 3)
+## 6. Actualización de Decisiones de Arquitectura y Reporte de Evaluación (Semana 3)
 
-Se incorporaron dos nuevos registros de decisión arquitectónica en [`docs/09-decisiones.md](../../docs/09-decisiones.md):
+Se incorporaron dos nuevos registros de decisión arquitectónica en [`docs/09-decisiones.md`](../../09-decisiones.md) y se emitió el reporte cuantitativo completo de evaluación en [`docs/07-evaluacion.md`](../../07-evaluacion.md):
 - **ADR-005:** *Estrategia de Fragmentación por Secciones Temáticas Canónicas y Base Vectorial ChromaDB Local*.
 - **ADR-006:** *Separación Arquitectónica Estricta de Datos Tabulares (GeoSalud Determinista vs. RAG Vectorial)*.
+- **Reporte de Evaluación (`docs/07-evaluacion.md`):** Certificación del conjunto de 20 preguntas de referencia (12 con respuesta, 4 sin respuesta/abstención, 2 fuera de dominio y 2 inyecciones de prompt) y 10 escenarios deterministas de triaje/GeoSalud, alcanzando **100% en recuperación (Recall@2), 100% en citas verificadas, 100% en abstención y 100% en bloqueo de inyecciones**.

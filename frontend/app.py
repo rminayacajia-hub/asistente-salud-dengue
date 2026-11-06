@@ -152,6 +152,25 @@ with st.sidebar:
         """
     )
 
+    with st.expander("🩺 Checklist Determinista de Triaje (Python)"):
+        st.caption("Evaluación algorítmica directa en `app/tools/evaluacion.py` (Cero LLM):")
+        chk_dolor = st.checkbox("Dolor abdominal intenso y continuo", key="chk_dolor")
+        chk_vomito = st.checkbox("Vómitos persistentes (3 o más en 24h)", key="chk_vomito")
+        chk_sangrado = st.checkbox("Sangrado de encías o nariz", key="chk_sangrado")
+        chk_letargo = st.checkbox("Somnolencia extrema o mareo al pararse", key="chk_letargo")
+        if st.button("Evaluar Signos de Alarma", use_container_width=True):
+            if any([chk_dolor, chk_vomito, chk_sangrado, chk_letargo]):
+                st.error(
+                    "🚨 **ALERTA CRÍTICA (GRUPO B/C MSP):** Se detectó al menos un signo de alarma. "
+                    "Requiere traslado inmediato a Sala de Emergencias o llamar al **ECU-911**."
+                )
+                st.session_state.confirmacion_pendiente = True
+            else:
+                st.success(
+                    "✅ **SIN SIGNOS DE ALARMA ACTUALES (GRUPO A MSP):** Mantenga hidratación oral con SRO, "
+                    "reposo, NO tome ibuprofeno ni aspirina y vigile síntomas cada 4 horas."
+                )
+
     st.divider()
 
     # Canales de Emergencia Nacionales
@@ -203,13 +222,22 @@ for mensaje in st.session_state.mensajes:
     with st.chat_message(mensaje["role"]):
         st.markdown(mensaje["content"])
 
-        # Si el mensaje incluye derivación por signos de alarma, renderizar tarjeta de alerta destacada
+        # Si el mensaje incluye derivación por signos de alarma, renderizar tarjeta de alerta destacada y confirmación humana (Regla de Oro 6)
         derivacion_texto = mensaje.get("derivar_a", "")
         if mensaje.get("alerta"):
             st.error(
                 f"🚨 **DERIVACIÓN MÉDICA URGENTE:**\n\n"
                 f"{derivacion_texto or 'Acuda de inmediato al centro de salud u hospital más cercano o llame al ECU-911.'}"
             )
+            st.warning(
+                "👤 **Confirmación Humana Requerida (Regla de Oro 6):** El sistema no ejecuta llamadas ni registros automáticos sin su autorización. "
+                "Confirme la acción de emergencia a continuación:"
+            )
+            col_c1, col_c2 = st.columns(2)
+            with col_c1:
+                st.link_button("📞 Confirmar y Llamar al ECU-911", "tel:911", use_container_width=True)
+            with col_c2:
+                st.link_button("🏥 Agendar / Consultar Línea 171 MSP", "tel:171", use_container_width=True)
         elif derivacion_texto:
             # Distingue si es geolocalización precisa con datos de contacto o sugerencia general
             es_geosalud = any(ind in derivacion_texto for ind in ("Tel:", "Dirección", "Hospital General", "Infectología", "Bastión", "Tipo C", "Delfina", "Zambrano"))

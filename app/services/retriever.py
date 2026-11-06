@@ -131,11 +131,18 @@ class RecuperadorDengue:
             if not self.ruta_indice.exists():
                 logger.warning(
                     "El directorio de base vectorial %s no existe. "
-                    "Ejecuta 'py scripts/ingest.py' para inicializarlo.",
+                    "Intentando auto-reconstrucción si es el índice por defecto...",
                     self.ruta_indice,
                 )
-                self._disponible = False
-                return
+                if self.ruta_indice.resolve() == RUTA_INDICE_DEFECTO.resolve():
+                    try:
+                        from scripts.ingest import ejecutar_ingesta
+                        ejecutar_ingesta()
+                    except Exception as err_ing:
+                        logger.warning("No se pudo auto-reconstruir el índice: %s", err_ing)
+                if not self.ruta_indice.exists():
+                    self._disponible = False
+                    return
 
             self._cliente = chromadb.PersistentClient(path=str(self.ruta_indice))
             # Obtenemos la colección existente (no la recreamos en tiempo de consulta)

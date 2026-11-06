@@ -6,13 +6,15 @@ Idea de diseño: «El modelo propone, el código dispone».
 El modelo orienta al ciudadano en lenguaje claro; las decisiones clínicas críticas
 (detección de signos de alarma y derivación urgente) las toma el código determinista en Python.
 """
+from collections import defaultdict
 from datetime import datetime, timezone
 from functools import lru_cache
+import time
 from typing import Iterator
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from config.settings import settings
@@ -34,6 +36,18 @@ from app.services.llm import (
     cargar_prompt,
 )
 from app.services.retriever import RecuperadorDengue
+from app.services.agent import (
+    LOCALIDADES_CONOCIDAS,
+    HERRAMIENTAS_AGENTE,
+    identificar_lugar_en_texto as _identificar_lugar_en_texto,
+    aplicar_regla_oro_agente as _evaluar_regla_signos_alarma,
+)
+from app.tools.evaluacion import (
+    SIGNOS_ALARMA_CLAVE,
+    ParametrosTriajeInput,
+    detectar_signos_alarma_en_texto as _detectar_signos_alarma,
+    evaluar_signos_alarma,
+)
 from app.tools.geosalud import (
     ubicar_establecimiento,
     formatear_establecimientos_para_asistente,
@@ -58,14 +72,46 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# Configuración de CORS para permitir peticiones desde el Frontend (Streamlit / Web)
+# Configuración de CORS desde variables de entorno (Semana 4: ALLOWED_ORIGINS)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Control de límite de tasa por IP en memoria (Semana 4: Protección OWASP LLM10)
+_REGISTRO_SOLICITUDES_IP: dict[str, list[float]] = defaultdict(list)
+
+
+@app.middleware("http")
+async def middleware_limitacion_tasa(request: Request, call_next):
+    """
+    Limita el número de peticiones por minuto por IP en endpoints de inferencia
+    para prevenir abuso de cuota en la URL pública desplegada (Semana 4).
+    """
+    if request.url.path in ("/api/chat", "/chat", "/api/chat/stream", "/chat/stream"):
+        ip_cliente = request.client.host if request.client else "local"
+        # No limitar al cliente de pruebas unitarias (testclient)
+        if ip_cliente != "testclient":
+            ahora = time.monotonic()
+            ventana = 60.0
+            limite = settings.RATE_LIMIT_PER_MINUTE
+            historial_ip = [t for t in _REGISTRO_SOLICITUDES_IP[ip_cliente] if ahora - t < ventana]
+            if len(historial_ip) >= limite:
+                return JSONResponse(
+                    status_code=429,
+                    content={
+                        "detail": (
+                            "Ha alcanzado el límite máximo de consultas por minuto. "
+                            "Por favor espere unos segundos; si presenta una emergencia médica llame al ECU-911."
+                        )
+                    },
+                )
+            historial_ip.append(ahora)
+            _REGISTRO_SOLICITUDES_IP[ip_cliente] = historial_ip
+    return await call_next(request)
 
 
 @lru_cache
@@ -133,104 +179,27 @@ def root():
 
 
 # ------------------------------------------------------------------------------
-# 2. LÓGICA CLÍNICA DETERMINISTA (REGLA DE ORO ADR-004)
+# 2. LÓGICA CLÍNICA DETERMINISTA Y HERRAMIENTAS DEL AGENTE (REGLA DE ORO ADR-004)
 # ------------------------------------------------------------------------------
-# Palabras y lemas que corresponden a signos de alarma de dengue grave según la OPS y MSP
-SIGNOS_ALARMA_CLAVE = (
-    "dolor abdominal",
-    "barriga",
-    "vomit",
-    "vomita",
-    "vomito",
-    "sangrad",
-    "sangre",
-    "encía",
-    "nariz",
-    "mareo",
-    "desmay",
-    "somnolen",
-    "letargo",
-    "irritab",
+# Las funciones deterministas (_detectar_signos_alarma, _identificar_lugar_en_texto,
+# _evaluar_regla_signos_alarma y evaluar_signos_alarma) están desacopladas siguiendo
+# el principio de Responsabilidad Única (SOLID - SRP) en:
+#   - app/tools/evaluacion.py (leídas en tiempo real desde config/umbrales.json)
+#   - app/tools/geosalud.py (directorio tabular data/geosalud_ecuador.json)
+#   - app/services/agent.py (orquestador del agente con límite de iteraciones)
+
+
+@app.post(
+    "/api/triaje/evaluar",
+    summary="Checklist determinista de signos de alarma (Regla de Oro en Python)",
+    tags=["Herramientas del Agente"],
 )
-
-LOCALIDADES_CONOCIDAS = (
-    "guayaquil", "portoviejo", "manta", "chone", "esmeraldas",
-    "babahoyo", "machala", "santo domingo", "francisco de orellana",
-    "nueva loja", "puyo", "guayas", "manabi", "manabí", "los rios",
-    "los ríos", "el oro", "sucumbios", "sucumbíos", "pastaza", "orellana"
-)
-
-
-def _detectar_signos_alarma(texto: str) -> bool:
+def endpoint_evaluar_triaje(entrada: ParametrosTriajeInput):
     """
-    Verifica de forma estricta y determinista si la consulta del usuario
-    contiene términos indicativos de alarma médica (dengue con signos de alarma).
+    Ejecuta la herramienta determinista `evaluar_signos_alarma` leyendo en vivo
+    los parámetros de `config/umbrales.json` (cero intervención del LLM).
     """
-    texto_lower = texto.lower()
-    return any(signo in texto_lower for signo in SIGNOS_ALARMA_CLAVE)
-
-
-def _identificar_lugar_en_texto(texto: str) -> str | None:
-    """
-    Detecta si el mensaje del usuario menciona alguna ciudad o provincia
-    del directorio GeoSalud Ecuador.
-    """
-    texto_lower = texto.lower()
-    for loc in LOCALIDADES_CONOCIDAS:
-        if loc in texto_lower:
-            return loc
-    return None
-
-
-def _evaluar_regla_signos_alarma(
-    texto: str,
-    datos_llm: RespuestaAsistente,
-    proveedor: str | None,
-    fuentes: list[Fuente] | None = None,
-) -> RespuestaChatAPI:
-    """
-    Regla de Oro en Python (ADR-004):
-    Si el texto del ciudadano menciona signos de alarma, el código Python impone
-    la derivación médica urgente, sin dejar que el LLM lo omita o suavice.
-    Si el usuario mencionó su ciudad o cantón, ubica el centro de salud específico
-    mediante la herramienta determinista GeoSalud.
-    Inyecta deterministamente las fuentes recuperadas por el RAG y GeoSalud (Semana 3).
-    """
-    derivar_a = datos_llm.derivar_a
-    alerta_activa = _detectar_signos_alarma(texto)
-    lugar = _identificar_lugar_en_texto(texto)
-
-    if alerta_activa:
-        if lugar:
-            centros = ubicar_establecimiento(lugar, solo_emergencia_24h=True) or ubicar_establecimiento(lugar)
-            if centros:
-                c0 = centros[0]
-                derivar_a = (
-                    f"Emergencias en {c0['nombre']} ({c0['ciudad']} - {c0['direccion']}, Tel: {c0['telefono']}) "
-                    f"o llamar al ECU-911 de inmediato"
-                )
-            else:
-                derivar_a = "Sala de Emergencias del Hospital más cercano o llamar al ECU-911 de inmediato"
-        else:
-            derivar_a = "Sala de Emergencias del Hospital más cercano o llamar al ECU-911 de inmediato"
-    elif lugar and (derivar_a or any(t in texto.lower() for t in ("donde", "dónde", "hospital", "centro", "salud", "voy", "acudir"))):
-        # Si no es alarma crítica pero el usuario pregunta dónde ir o se sugiere derivación en esa localidad
-        centros = ubicar_establecimiento(lugar, solo_emergencia_24h=True) or ubicar_establecimiento(lugar)
-        if centros:
-            c0 = centros[0]
-            derivar_a = f"{c0['nombre']} ({c0['ciudad']} - {c0['direccion']}, Tel: {c0['telefono']})"
-
-    # Si el asistente se abstiene (fuera de dominio), no se adjuntan fuentes
-    fuentes_finales = [] if datos_llm.se_abstiene else (fuentes or [])
-
-    return RespuestaChatAPI(
-        respuesta=datos_llm.respuesta,
-        se_abstiene=datos_llm.se_abstiene,
-        derivar_a=derivar_a,
-        fuentes=fuentes_finales,
-        proveedor=proveedor,
-        alerta_signo_alarma=alerta_activa,
-    )
+    return evaluar_signos_alarma(entrada)
 
 
 # ------------------------------------------------------------------------------
