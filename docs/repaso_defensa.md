@@ -14,6 +14,7 @@
 5. [Bloque 5: DevOps, Versionado SemVer y Pruebas Automatizadas (Semanas 1 y 2)](#bloque-5-devops-versionado-semver-y-pruebas-automatizadas-semanas-1-y-2)
 6. [Bloque 6: Preguntas Capciosas, Trampa y de Doble Sentido del Tribunal Evaluador](#bloque-6-preguntas-capciosas-trampa-y-de-doble-sentido-del-tribunal-evaluador)
 7. [Bloque 7: RAG Normativo, Base Vectorial y GeoSalud Determinista (Semana 3)](#bloque-7-rag-normativo-base-vectorial-y-geosalud-determinista-semana-3)
+8. [Bloque 8: Despliegue, Seguridad en Producción y Cierre (Semana 4)](#bloque-8-despliegue-seguridad-en-producción-y-cierre-semana-4)
 
 ---
 
@@ -353,4 +354,57 @@ Este bloque contiene las preguntas "con trampa" más frecuentes en defensas de t
   2. **Delimitación de datos no confiables (`app/main.py`):** El contexto recuperado se envuelve en bloques delimitadores explícitos (`=== GUÍAS OFICIALES OPS / MSP (RAG) ===`), y el `system_v3.md` instruye tratar todo texto externo exclusivamente como datos de referencia, jamás como órdenes.  
   3. **Inyección de citas en código:** Aunque el texto intentara manipular la salida, las fuentes y la alerta de signos de alarma (`_evaluar_regla_signos_alarma`) las calcula e inyecta Python puro, nunca el LLM».*
 - 💡 **Palabras clave:** OWASP LLM01, Inyección indirecta (Greshake et al., 2023), delimitación de contexto, saneamiento en ingesta.
+
+---
+
+## Bloque 8: Despliegue, Seguridad en Producción y Cierre (Semana 4)
+
+### Pregunta 8.1:
+> *«¿Cómo garantizan que la base vectorial ChromaDB sobreviva a reinicios en plataformas en la nube donde el sistema de archivos suele ser efímero?»*
+
+- 🚨 **La trampa del evaluador:** Pone a prueba si entiendes el ciclo de vida de los contenedores Docker en plataformas PaaS (Render, Railway, Cloud Run).
+- 🎯 **Respuesta correcta para la defensa:**  
+  *«Aplicamos un **patrón de doble persistencia**:  
+  1. **En fase de construcción (`Dockerfile`):** La directiva `RUN python scripts/ingest.py` pre-construye el índice vectorial dentro de la imagen inmutable.  
+  2. **En fase de arranque (`CMD` y `app/services/retriever.py`):** Antes de iniciar Uvicorn, el script de arranque verifica si `data/index/` existe; si un volumen efímero se limpió, ejecuta la ingesta automáticamente en segundos utilizando el modelo local ONNX.  
+  Esto garantiza que el contenedor siempre arranque con su base de conocimiento disponible y sin depender de descargas en tiempo de ejecución».*
+- 💡 **Palabras clave:** Contenedor inmutable, pre-construcción en Dockerfile, auto-reconstrucción al arranque, persistencia en PaaS.
+
+---
+
+### Pregunta 8.2:
+> *«¿Cómo protegen su backend contra ataques de denegación de servicio o consumo abusivo que agote su cuota de IA (OWASP LLM10)?»*
+
+- 🚨 **La trampa del evaluador:** Evalúa si implementaste mecanismos de defensa perimetral para proteger la infraestructura y las claves de API.
+- 🎯 **Respuesta correcta para la defensa:**  
+  *«Implementamos tres capas de protección en `app/main.py` y `app/schemas.py`:  
+  1. **Rate Limiting por IP:** Middleware HTTP que limita las peticiones por cliente (`RATE_LIMIT_PER_MINUTE=60`), devolviendo un `HTTP 429` limpio ante ráfagas abusivas.  
+  2. **Validación estricta de longitud en Pydantic:** Rechazamos en milisegundos (`HTTP 422`) cualquier mensaje menor a 2 caracteres o mayor a 2.000 caracteres, bloqueando textos gigantes antes de que consuman tokens del modelo.  
+  3. **Timeouts estrictos y reintentos con backoff:** Si un proveedor se cuelga, el timeout de 15 segundos corta la conexión y activa el fallback a Groq».*
+- 💡 **Palabras clave:** OWASP LLM10 (Consumo Excesivo), Rate Limiting por IP, validación Pydantic, contención de costos.
+
+---
+
+### Pregunta 8.3:
+> *«¿Qué es la Regla de Oro 6 ('Lo que tiene consecuencias requiere confirmación') y cómo la implementaron en la interfaz de usuario?»*
+
+- 🚨 **La trampa del evaluador:** Evalúa los principios de interacción humano-IA (*Human-in-the-Loop*) y ética en salud pública.
+- 🎯 **Respuesta correcta para la defensa:**  
+  *«En salud pública, una acción automatizada como llamar a emergencias o despachar una ambulancia tiene consecuencias operativas reales sobre los recursos del Estado.  
+  Nuestra **Regla de Oro 6** establece que el sistema orienta y recomienda, pero **jamás ejecuta una llamada de emergencia sin la confirmación explícita del usuario**. En `frontend/app.py`, cuando se detecta un signo de alarma, el sistema presenta un botón interactivo de confirmación antes de abrir el enlace de marcación directa (`tel:911` o `tel:171`), dejando el control final siempre en manos de la persona o cuidador».*
+- 💡 **Palabras clave:** Human-in-the-Loop, Regla de Oro 6, confirmación explícita, llamada asistida sin automatización ciega.
+
+---
+
+### Pregunta 8.4:
+> *«¿Por qué decidieron sustentar la aplicación ejecutándola en local para la defensa en lugar de usar un enlace en la nube?»*
+
+- 🚨 **La trampa del evaluador:** Busca verificar si sabes justificar la elección de entorno basándote en confiabilidad y no en pereza.
+- 🎯 **Respuesta correcta para la defensa:**  
+  *«Porque en una sustentación oral de 12 minutos con tiempo estricto, la **latencia predecible y la disponibilidad garantizada son prioritarias**:  
+  - Las plataformas gratuitas en la nube sufren de *arranque en frío (cold start)*, tardando entre 40 y 50 segundos en responder si el contenedor entra en reposo.  
+  - En local, el backend y el frontend responden en **menos de 1.5 segundos**, eliminando el riesgo de microcortes en la red Wi-Fi de la universidad.  
+  - No obstante, la aplicación está **100% lista para producción**: cuenta con su `Dockerfile` probado y su configuración lista para ser desplegada en cualquier momento».*
+- 💡 **Palabras clave:** Cold start, latencia predecible, disponibilidad en sustentación, Dockerfile para producción.
+
 
